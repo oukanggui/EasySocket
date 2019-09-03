@@ -141,7 +141,6 @@ public class EasySocket implements OnSocketReadListener {
         }
         mServerHost = serverHost;
         mServerPort = serverPort;
-        registerNetworkChangeBroadcast();
         new SocketInitHandler(mContext).start();
     }
 
@@ -163,9 +162,11 @@ public class EasySocket implements OnSocketReadListener {
             // TODO 初始化失败如何重连
             e.printStackTrace();
             Log.e(TAG, "init exception----> e = " + e);
+            registerNetworkChangeBroadcast();
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, "init exception----> e = " + e);
+            registerNetworkChangeBroadcast();
         }
     }
 
@@ -278,7 +279,7 @@ public class EasySocket implements OnSocketReadListener {
     }
 
     /**
-     * 注册网络状态变化广播
+     * 注册网络状态变化广播,在初始化失败时再注册
      */
     private void registerNetworkChangeBroadcast() {
         if (mNetworkChangeReceiver == null) {
@@ -402,6 +403,7 @@ public class EasySocket implements OnSocketReadListener {
                     public void onSuccess() {
                         Log.d(TAG, "HeartBeatRunnable --> run ,send heart beat data success，I am alive");
                         // 继续发送延时心跳包和超时Runnable
+                        removeHeartBeatRunnable();
                         postHeartBeatRunnable();
                     }
 

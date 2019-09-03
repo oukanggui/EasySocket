@@ -36,7 +36,7 @@ public class SocketConnectedService extends Service {
     /**
      * 判断服务是否已退出
      */
-    private static boolean isExit = false;
+    private static boolean mIsServiceDestroyed = false;
 
     /**
      * 线程池执行器
@@ -75,7 +75,7 @@ public class SocketConnectedService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        isExit = true;
+        mIsServiceDestroyed = true;
         if (mServerSocket != null) {
             try {
                 mServerSocket.close();
@@ -106,7 +106,7 @@ public class SocketConnectedService extends Service {
             try {
                 mServerSocket = new ServerSocket(EasyServerSocket.getInstance().getSocketListenPort());
                 Log.d(TAG, "ServerSocket已启动.........");
-                while (!isExit) {
+                while (!mIsServiceDestroyed) {
                     Log.d(TAG, "ServerSocket正在监听请求.........");
                     Socket socket = mServerSocket.accept();
                     Log.d(TAG, "ServerSocket收到请求.........，客户端地址：" + socket.getRemoteSocketAddress().toString());
@@ -130,7 +130,7 @@ public class SocketConnectedService extends Service {
 
         @Override
         public void run() {
-            Log.d(TAG, "SocketHandleRunnable---->run，处理客户端Socket链接请求");
+            Log.d(TAG, "SocketHandleRunnable---->run，处理客户端Socket连接请求");
             if (mSocket != null && !mSocket.isClosed() && !mSocket.isInputShutdown()) {
                 try {
                     InputStream is = mSocket.getInputStream();
