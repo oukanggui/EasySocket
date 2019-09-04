@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
@@ -15,9 +16,13 @@ import androidx.core.app.NotificationCompat;
 import com.okg.easysocket.server.executor.ThreadExecutor;
 import com.okg.easysocket.server.manager.EasyServerSocket;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -131,30 +136,25 @@ public class SocketConnectedService extends Service {
         @Override
         public void run() {
             Log.d(TAG, "SocketHandleRunnable---->run，处理客户端Socket连接请求");
-            if (mSocket != null && !mSocket.isClosed() && !mSocket.isInputShutdown()) {
+            while (mSocket != null && !mSocket.isClosed() && !mSocket.isInputShutdown()) {
                 try {
                     InputStream is = mSocket.getInputStream();
-                    byte[] buffer = new byte[1024 * 4];
-                    int length;
-                    StringBuilder stringBuilder = new StringBuilder();
-                    // read返回-1，表明流数据已读取完（）
-                    // read方法是阻塞的，必须在线程执行，当管道内无数据时read方法会阻塞，除非是如下三中情况会停止阻塞
-                    // 1、InputStream数据流有数据时
-                    // 2、文件读取完时
-                    // 3、发生IO异常时
-                    while ((length = is.read(buffer)) != -1) {
-                        stringBuilder.append(new String(buffer, 0, length));
+                    BufferedReader input = new BufferedReader(new InputStreamReader(is));
+                    String message = "";
+                    String line = null;
+                    // 读取到"/n/r"结束，此时line值为空，防止一直阻塞在readLine方法
+                    while ((line = input.readLine()) != null && !TextUtils.isEmpty(line)) {
+                        message += line;
                     }
-                    String message = stringBuilder.toString();
                     Log.d(TAG, "SocketHandleRunnable---->run，收到客户端请求内容：\n" + message);
                     sendMessageBack(message);
                 } catch (IOException e) {
                     e.printStackTrace();
                     Log.e(TAG, "SocketHandleRunnable---->run exception occur ,exception = " + e);
+                    // TODO 是否需要退出重新监听
                 }
-            } else {
-                Log.d(TAG, "SocketHandleRunnable---->run，Socket状态异常");
             }
+            Log.d(TAG, "SocketHandleRunnable---->run，Socket状态异常");
         }
 
         private boolean sendMessageBack(String message) {
@@ -162,8 +162,14 @@ public class SocketConnectedService extends Service {
             try {
                 if (mSocket != null && !mSocket.isClosed() && !mSocket.isOutputShutdown()) {
                     OutputStream os = mSocket.getOutputStream();
-                    os.write(message.getBytes());
-                    os.flush();
+                    BufferedWriter output = new BufferedWriter(new OutputStreamWriter(os));
+                    // 由于长连接 os流没有Shutdown，导致服务器一直阻塞在readLine/read方法，即使此时没有数据传输了
+                    // readLine()只有在数据流发生异常或者另一端被close()掉时，才会返回null值。
+                    // 如果不指定buffer大小，则readLine()使用的buffer有8192个字符。在达到buffer大小之前，只有遇到"/r"、"/n"、"/r/n"才会返回。
+                    // 解决方法：在客户端发送数据时，手动给输入内容加入"\n"或"\r"，再写入服务器，服务端写数据也是如此
+                    output.write(message);
+                    output.write("\n\r");
+                    output.flush();
                     return true;
                 } else {
                     Log.e(TAG, "SocketHandleRunnable---->sendMessageBack Socket状态异常");

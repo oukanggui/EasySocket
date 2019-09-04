@@ -1,6 +1,7 @@
 package com.baymax.easysocket.handler;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.baymax.easysocket.bean.SocketBean;
@@ -8,8 +9,10 @@ import com.baymax.easysocket.listener.OnSocketReadListener;
 import com.baymax.easysocket.manager.EasySocket;
 import com.baymax.easysocket.util.JsonUtil;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.Socket;
 
 /**
@@ -34,20 +37,15 @@ public class SocketResponseHandler extends Thread {
         Socket socket = EasySocket.getInstance(mContext).getConnectedSocket();
         if (socket != null) {
             try {
-                InputStream is = socket.getInputStream();
-                byte[] buffer = new byte[1024 * 4];
                 while (!socket.isClosed() && !socket.isInputShutdown()) {
-                    int length;
-                    StringBuilder stringBuilder = new StringBuilder();
-                    // read返回-1，表明流数据已读取完（）
-                    // read方法是阻塞的，必须在线程执行，当管道内无数据时read方法会阻塞，除非是如下三中情况会停止阻塞
-                    // 1、InputStream数据流有数据时
-                    // 2、文件读取完时
-                    // 3、发生IO异常时
-                    while ((length = is.read(buffer)) != -1) {
-                        stringBuilder.append(new String(buffer, 0, length));
+                    InputStream is = socket.getInputStream();
+                    BufferedReader input = new BufferedReader(new InputStreamReader(is));
+                    String message = "";
+                    String line = null;
+                    // 读取到"/n/r"结束，此时line值为空，防止一直阻塞在readLine方法
+                    while ((line = input.readLine()) != null && !TextUtils.isEmpty(line)) {
+                        message += line;
                     }
-                    String message = stringBuilder.toString();
                     SocketBean socketBean = JsonUtil.parseJsonToSocketBean(message);
                     // 收到服务器过来的消息，有两种方案：
                     // 1、通过本地Broadcast发送出去
@@ -55,12 +53,12 @@ public class SocketResponseHandler extends Thread {
                     if (socketBean.isHeartBeatData()) {
                         Log.d(TAG, "Receive heart beat data ,message:\n" + message);
                         if (mOnSocketReadListener != null) {
-                            mOnSocketReadListener.onReceiveHeartBeatData(message);
+                            mOnSocketReadListener.onReceiveHeartBeatData(socketBean);
                         }
                     } else {
                         Log.d(TAG, "Receive business data ,message:\n" + message);
                         if (mOnSocketReadListener != null) {
-                            mOnSocketReadListener.onReceiveBusinessData(message);
+                            mOnSocketReadListener.onReceiveBusinessData(socketBean);
                         }
                     }
                 }

@@ -154,10 +154,10 @@ public class EasySocket implements OnSocketReadListener {
         try {
             mSocket = new Socket(mServerHost, mServerPort);
             mSocket.setKeepAlive(true);
+            Log.d(TAG, "init success---->socket is connected......");
             mSocketResponseHandler = new SocketResponseHandler(mContext, this);
             mSocketResponseHandler.start();
             postHeartBeatRunnable();
-            Log.d(TAG, "init success---->socket is connected......");
         } catch (UnknownHostException e) {
             // TODO 初始化失败如何重连
             e.printStackTrace();
@@ -358,71 +358,56 @@ public class EasySocket implements OnSocketReadListener {
     /**
      * 处理心跳回复，需要取消心跳超时Handler消息
      *
-     * @param message
+     * @param socketBean
      */
     @Override
-    public void onReceiveHeartBeatData(String message) {
+    public void onReceiveHeartBeatData(SocketBean socketBean) {
         mUIHandler.removeCallbacks(mHeartBeatTimeoutRunnable);
     }
 
     /**
      * 收到业务数据回调，切换到主线程回调到监听处
      *
-     * @param message
+     * @param socketBean
      */
     @Override
-    public void onReceiveBusinessData(String message) {
+    public void onReceiveBusinessData(final SocketBean socketBean) {
         mUIHandler.post(new Runnable() {
             @Override
             public void run() {
                 for (OnSocketResponseListener onSocketResponseListener : mOnSocketResponseListeners) {
                     if (onSocketResponseListener != null) {
-                        onSocketResponseListener.onResponse(new SocketBean());
+                        onSocketResponseListener.onResponse(socketBean);
                     }
                 }
             }
         });
     }
 
-    /**
-     * 心跳Runnable
-     */
-    private class HeartBeatRunnable implements Runnable {
-
-        @Override
-        public void run() {
-            Log.d(TAG, "HeartBeatRunnable --> run ,ready to send heart beat data");
-            if (System.currentTimeMillis() - mLastRequestTime >= HEART_BEAT_RATE_INTERVAL_MILLIS) {
-                SocketBean socketBean = new SocketBean();
-                socketBean.type = 0;
-                socketBean.deviceId = "001";
-                socketBean.data = null;
-                Log.d(TAG, "HeartBeatRunnable --> run ,send heart beat data,message: \n" + JsonUtil.convertSocketBeanToJson(socketBean));
-                enqueueRequest(socketBean, new OnSocketRequestListener() {
-                    @Override
-                    public void onSuccess() {
-                        Log.d(TAG, "HeartBeatRunnable --> run ,send heart beat data success，I am alive");
-                        // 继续发送延时心跳包和超时Runnable
-                        removeHeartBeatRunnable();
-                        postHeartBeatRunnable();
-                    }
-
-                    @Override
-                    public void onFailure(String reason) {
-                        Log.d(TAG, "HeartBeatRunnable --> run ,send heart beat data fail，errorMessage = " + reason);
-                        // TODO 优化点:心跳包发送失败后，需要重连，可以根据网络是否可用决定重连的时间
-                        // TODO 1、网络可用，立即重连，网络不可以用，延时重连，是否需要控制重连的次数，超过一定重连次数后，不再重连
-                        // 心跳包发送失败后，进行重连
-                        reconnectSocket();
-                    }
-                });
-            } else {
-                Log.d(TAG, "HeartBeatRunnable --> run ,距离上次发送成功时间间隔低于心跳高时间间隔，无需发送心跳包，心跳包重新计时");
-                // 心跳包重新计时
+    private void sendHeartBeatData() {
+        SocketBean socketBean = new SocketBean();
+        socketBean.type = 0;
+        socketBean.deviceId = "001";
+        socketBean.data = null;
+        Log.d(TAG, "HeartBeatRunnable --> run ,send heart beat data,message: \n" + JsonUtil.convertSocketBeanToJson(socketBean));
+        enqueueRequest(socketBean, new OnSocketRequestListener() {
+            @Override
+            public void onSuccess() {
+                Log.d(TAG, "HeartBeatRunnable --> run ,send heart beat data success，I am alive");
+                // 继续发送延时心跳包和超时Runnable
                 removeHeartBeatRunnable();
                 postHeartBeatRunnable();
             }
-        }
+
+            @Override
+            public void onFailure(String reason) {
+                Log.d(TAG, "HeartBeatRunnable --> run ,send heart beat data fail，errorMessage = " + reason);
+                // TODO 优化点:心跳包发送失败后，需要重连，可以根据网络是否可用决定重连的时间
+                // TODO 1、网络可用，立即重连，网络不可以用，延时重连，是否需要控制重连的次数，超过一定重连次数后，不再重连
+                // 心跳包发送失败后，进行重连
+                reconnectSocket();
+            }
+        });
     }
 
     /**
@@ -435,6 +420,25 @@ public class EasySocket implements OnSocketReadListener {
             Log.e(TAG, "send heart beat data timeout");
             // TODO 心跳包超时后，是否需要根据网络状态进行重连
             reconnectSocket();
+        }
+    }
+
+    /**
+     * 心跳Runnable
+     */
+    private class HeartBeatRunnable implements Runnable {
+
+        @Override
+        public void run() {
+            Log.d(TAG, "HeartBeatRunnable --> run ,ready to send heart beat data");
+            if (System.currentTimeMillis() - mLastRequestTime >= HEART_BEAT_RATE_INTERVAL_MILLIS) {
+                sendHeartBeatData();
+            } else {
+                Log.d(TAG, "HeartBeatRunnable --> run ,距离上次发送成功时间间隔低于心跳高时间间隔，无需发送心跳包，心跳包重新计时");
+                // 心跳包重新计时
+                removeHeartBeatRunnable();
+                postHeartBeatRunnable();
+            }
         }
     }
 
