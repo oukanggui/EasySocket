@@ -19,6 +19,7 @@ import com.baymax.easysocket.manager.EasySocket;
 import com.okg.easysocket.R;
 import com.okg.easysocket.adapter.ChatAdapter;
 import com.okg.easysocket.bean.ChatBean;
+import com.okg.easysocket.util.CommonUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +56,9 @@ public class MainActivity extends BaseActivity {
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (CommonUtil.isFastDoubleClick()) {
+                    return;
+                }
                 final SocketBean socketBean = new SocketBean();
                 socketBean.type = 1;
                 socketBean.deviceId = DEVICE_ID;
