@@ -15,6 +15,7 @@ import com.baymax.easysocket.bean.SocketBean;
 import com.baymax.easysocket.handler.SocketInitHandler;
 import com.baymax.easysocket.handler.SocketRequestHandler;
 import com.baymax.easysocket.handler.SocketResponseHandler;
+import com.baymax.easysocket.listener.OnSocketInitListener;
 import com.baymax.easysocket.listener.OnSocketReadListener;
 import com.baymax.easysocket.listener.OnSocketRequestListener;
 import com.baymax.easysocket.listener.OnSocketResponseListener;
@@ -108,6 +109,11 @@ public class EasySocket implements OnSocketReadListener {
      */
     private List<OnSocketResponseListener> mOnSocketResponseListeners = Collections.synchronizedList(new ArrayList<OnSocketResponseListener>());
 
+    /**
+     * Socket初始化监听器
+     */
+    private OnSocketInitListener mOnSocketInitListener;
+
 
     private EasySocket(Context context) {
         mContext = context.getApplicationContext();
@@ -136,11 +142,24 @@ public class EasySocket implements OnSocketReadListener {
      * @param serverPort 要连接的服务器端口
      */
     public void init(String serverHost, int serverPort) {
+        init(serverHost, serverPort, null);
+    }
+
+    /**
+     * 初始化Socket连接,对外提供的接口
+     * ！在使用前必须调用此方式进行初始化
+     *
+     * @param serverHost           要连接的服务器主机Host
+     * @param serverPort           要连接的服务器端口
+     * @param onSocketInitListener 初始化监听器
+     */
+    public void init(String serverHost, int serverPort, OnSocketInitListener onSocketInitListener) {
         if (TextUtils.isEmpty(serverHost)) {
             throw new IllegalStateException("serverHost cannot be empty!!");
         }
         mServerHost = serverHost;
         mServerPort = serverPort;
+        mOnSocketInitListener = onSocketInitListener;
         new SocketInitHandler(mContext).start();
     }
 
@@ -151,6 +170,8 @@ public class EasySocket implements OnSocketReadListener {
      * step 3:心跳和超时管理-初始化成功后，就准备发送心跳包和超时监听
      */
     public void initSocketConnection() {
+        boolean isInitSuccess = true;
+        String reason = "socket is connected......";
         try {
             mSocket = new Socket(mServerHost, mServerPort);
             mSocket.setKeepAlive(true);
@@ -163,10 +184,31 @@ public class EasySocket implements OnSocketReadListener {
             e.printStackTrace();
             Log.e(TAG, "init exception----> e = " + e);
             registerNetworkChangeBroadcast();
+            isInitSuccess = false;
+            reason = "" + e;
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, "init exception----> e = " + e);
             registerNetworkChangeBroadcast();
+            isInitSuccess = false;
+            reason = "" + e;
+        } finally {
+            // 初始化结果切换到主线程回调
+            if (mOnSocketInitListener != null) {
+                final boolean isInitSuccessFinal = isInitSuccess;
+                final String reasonFinal = reason;
+                mUIHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isInitSuccessFinal) {
+                            mOnSocketInitListener.onSocketInitSuccess(reasonFinal);
+                        } else {
+                            mOnSocketInitListener.onSocketInitFailure(reasonFinal);
+                        }
+                    }
+                });
+            }
+
         }
     }
 
@@ -387,7 +429,7 @@ public class EasySocket implements OnSocketReadListener {
     private void sendHeartBeatData() {
         SocketBean socketBean = new SocketBean();
         socketBean.type = 0;
-        socketBean.deviceId = "001";
+        socketBean.deviceId = null;
         socketBean.data = null;
         Log.d(TAG, "HeartBeatRunnable --> run ,send heart beat data,message: \n" + JsonUtil.convertSocketBeanToJson(socketBean));
         enqueueRequest(socketBean, new OnSocketRequestListener() {
