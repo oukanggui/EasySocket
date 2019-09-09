@@ -45,9 +45,9 @@ public class JsonUtil {
         SocketBean socketBean = new SocketBean();
         try {
             JSONObject jsonObject = new JSONObject(jsonString);
-            socketBean.type = jsonObject.getInt(FIELD_TYPE);
-            socketBean.deviceId = jsonObject.getString(FIELD_DEVICE_ID);
-            socketBean.data = jsonObject.getString(FIELD_DATA);
+            socketBean.type = jsonObject.optInt(FIELD_TYPE);
+            socketBean.deviceId = jsonObject.optString(FIELD_DEVICE_ID);
+            socketBean.data = jsonObject.optString(FIELD_DATA);
         } catch (JSONException e) {
             Log.e(TAG, "parseJsonToSocketBean error = " + e);
         }
