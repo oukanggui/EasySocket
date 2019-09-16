@@ -22,7 +22,9 @@ import com.baymax.easysocket.listener.OnSocketResponseListener;
 import com.baymax.easysocket.util.JsonUtil;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,6 +63,11 @@ public class EasySocket implements OnSocketReadListener {
      * 服务器端口号，支持配置
      */
     private int mServerPort;
+
+    /**
+     * Socket初始化连接超时时间
+     */
+    private static final int TIMEOUT_CONNECT_INIT = 10 * 1000;
 
     /**
      * 心跳包时间间隔，支持配置，默认60秒
@@ -173,7 +180,9 @@ public class EasySocket implements OnSocketReadListener {
         boolean isInitSuccess = true;
         String reason = "socket is connected......";
         try {
-            mSocket = new Socket(mServerHost, mServerPort);
+            mSocket = new Socket();
+            SocketAddress socketAddress = new InetSocketAddress(mServerHost, mServerPort);
+            mSocket.connect(socketAddress, TIMEOUT_CONNECT_INIT);
             mSocket.setKeepAlive(true);
             Log.d(TAG, "init success---->socket is connected......");
             mSocketResponseHandler = new SocketResponseHandler(mContext, this);
