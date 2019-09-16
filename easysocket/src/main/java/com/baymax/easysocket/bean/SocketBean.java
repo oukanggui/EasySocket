@@ -12,7 +12,7 @@ public class SocketBean {
      * 0：心跳数据包
      * 非0：业务数据包，具体业务类型需要自己定义
      */
-    public int type;
+    public int type = -1;
 
     /**
      * 设备唯一身份标识Id，用于指定通信的设备

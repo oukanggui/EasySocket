@@ -8,6 +8,7 @@ import com.baymax.easysocket.bean.SocketBean;
 import com.baymax.easysocket.listener.OnSocketReadListener;
 import com.baymax.easysocket.manager.EasySocket;
 import com.baymax.easysocket.util.JsonUtil;
+import com.baymax.easysocket.util.StringUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -46,20 +47,24 @@ public class SocketResponseHandler extends Thread {
                     while ((line = input.readLine()) != null && !TextUtils.isEmpty(line)) {
                         message += line;
                     }
-                    SocketBean socketBean = JsonUtil.parseJsonToSocketBean(message);
-                    // 收到服务器过来的消息，有两种方案：
-                    // 1、通过本地Broadcast发送出去
-                    // 2、通过监听器
-                    if (socketBean.isHeartBeatData()) {
-                        Log.d(TAG, "Receive heart beat data ,message:\n" + message);
-                        if (mOnSocketReadListener != null) {
-                            mOnSocketReadListener.onReceiveHeartBeatData(socketBean);
+                    if (!StringUtil.isEmpty(message)) {
+                        SocketBean socketBean = JsonUtil.parseJsonToSocketBean(message);
+                        // 收到服务器过来的消息，有两种方案：
+                        // 1、通过本地Broadcast发送出去
+                        // 2、通过监听器
+                        if (socketBean.isHeartBeatData()) {
+                            Log.d(TAG, "Receive heart beat data ,message:\n" + message);
+                            if (mOnSocketReadListener != null) {
+                                mOnSocketReadListener.onReceiveHeartBeatData(socketBean);
+                            }
+                        } else {
+                            Log.d(TAG, "Receive business data ,message:\n" + message);
+                            if (mOnSocketReadListener != null) {
+                                mOnSocketReadListener.onReceiveBusinessData(socketBean);
+                            }
                         }
                     } else {
-                        Log.d(TAG, "Receive business data ,message:\n" + message);
-                        if (mOnSocketReadListener != null) {
-                            mOnSocketReadListener.onReceiveBusinessData(socketBean);
-                        }
+                        Log.d(TAG, "Receive message from server is empty，just ignore");
                     }
                 }
             } catch (IOException e) {
