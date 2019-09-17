@@ -16,6 +16,8 @@ public class JsonUtil {
     private static final String TAG = JsonUtil.class.getSimpleName();
 
     public static final String FIELD_TYPE = "type";
+    public static final String FIELD_FROM = "from";
+    public static final String FIELD_STATUS = "status";
     public static final String FIELD_DEVICE_ID = "deviceId";
     public static final String FIELD_DATA = "data";
 
@@ -28,6 +30,8 @@ public class JsonUtil {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put(FIELD_TYPE, socketBean.type);
+            jsonObject.put(FIELD_FROM, socketBean.from);
+            jsonObject.put(FIELD_STATUS, socketBean.status);
             jsonObject.put(FIELD_DEVICE_ID, socketBean.deviceId);
             jsonObject.put(FIELD_DATA, socketBean.data);
         } catch (JSONException e) {
@@ -46,6 +50,8 @@ public class JsonUtil {
         try {
             JSONObject jsonObject = new JSONObject(jsonString);
             socketBean.type = jsonObject.optInt(FIELD_TYPE);
+            socketBean.from = jsonObject.optInt(FIELD_FROM);
+            socketBean.status = jsonObject.optInt(FIELD_STATUS);
             socketBean.deviceId = jsonObject.optString(FIELD_DEVICE_ID);
             socketBean.data = jsonObject.optString(FIELD_DATA);
         } catch (JSONException e) {
