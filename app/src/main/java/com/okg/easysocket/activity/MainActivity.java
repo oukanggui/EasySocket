@@ -30,6 +30,14 @@ import java.util.List;
  * 演示Activity
  */
 public class MainActivity extends BaseActivity {
+    /**
+     * 服务器主机IP
+     */
+    private static final String SERVER_HOST = "baymax.in.3322.org";
+    /**
+     * 服务器Socket监听端口
+     */
+    private static final int SERVER_PORT = 32307;
     private static final String DEVICE_ID = "001";
     private Button btnSend;
     private TextView tvTitle;
@@ -96,7 +104,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void run() {
                 //初始化EasySocket管理器
-                EasySocket.getInstance(MainActivity.this).init("localhost", 8082, new OnSocketInitListener() {
+                EasySocket.getInstance(MainActivity.this).init(SERVER_HOST, SERVER_PORT, new OnSocketInitListener() {
                     @Override
                     public void onSocketInitSuccess(String message) {
                         tvTitle.setText("设备" + DEVICE_ID + "---已连接上");
