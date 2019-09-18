@@ -129,7 +129,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onHandleSocketResponse(SocketBean socketBean) {
-        ChatBean chatBean = new ChatBean(socketBean.data, ChatBean.TYPE_RECEIVED);
+        ChatBean chatBean = new ChatBean(socketBean.from == SocketBean.FROM_APP ? socketBean.msg : socketBean.data, ChatBean.TYPE_RECEIVED);
         mChatList.add(chatBean);
         //调用适配器的notifyItemInserted()用于通知列表有新的数据插入，这样新增的一条消息才能在RecyclerView中显示
         mChatAdapter.notifyItemInserted(mChatList.size() - 1);

@@ -44,6 +44,11 @@ public class SocketBean {
     public String data;
 
     /**
+     * 服务器响应的状态数据，eg:成功、失败
+     */
+    public String msg;
+
+    /**
      * 判断是否是心跳数据
      *
      * @return

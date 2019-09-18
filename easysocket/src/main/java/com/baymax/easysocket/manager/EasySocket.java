@@ -351,7 +351,7 @@ public class EasySocket implements OnSocketReadListener {
         if (socketBean == null) {
             throw new IllegalStateException("enqueueRequest--->socketBean param cannot be null");
         }
-        enqueueRequest(JsonUtil.convertSocketBeanToJson(socketBean), callback);
+        enqueueRequest(JsonUtil.toJson(socketBean), callback);
     }
 
     /**
@@ -440,7 +440,7 @@ public class EasySocket implements OnSocketReadListener {
         socketBean.type = 0;
         socketBean.deviceId = null;
         socketBean.data = null;
-        Log.d(TAG, "HeartBeatRunnable --> run ,send heart beat data,message: \n" + JsonUtil.convertSocketBeanToJson(socketBean));
+        Log.d(TAG, "HeartBeatRunnable --> run ,send heart beat data,message: \n" + JsonUtil.toJson(socketBean));
         enqueueRequest(socketBean, new OnSocketRequestListener() {
             @Override
             public void onSuccess() {

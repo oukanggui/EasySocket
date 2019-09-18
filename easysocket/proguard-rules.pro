@@ -19,3 +19,7 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Gson混淆脚本
+-dontwarn com.google.gson.**
+-keep class com.google.gson.** { *; }
