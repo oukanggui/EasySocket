@@ -109,7 +109,7 @@ public class MainActivity extends BaseActivity {
                     public void onSocketInitSuccess(String message) {
                         tvTitle.setText("设备" + DEVICE_ID + "---已连接上");
                         btnSend.setEnabled(true);
-                        Toast.makeText(MainActivity.this, "服务器已连接上，可以与服务器通信聊天了", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "服务器已连接上", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override

@@ -166,7 +166,9 @@ public class EasySocket implements OnSocketReadListener {
         }
         mServerHost = serverHost;
         mServerPort = serverPort;
-        mOnSocketInitListener = onSocketInitListener;
+        if (onSocketInitListener != null) {
+            mOnSocketInitListener = onSocketInitListener;
+        }
         new SocketInitHandler(mContext).start();
     }
 
@@ -177,47 +179,32 @@ public class EasySocket implements OnSocketReadListener {
      * step 3:心跳和超时管理-初始化成功后，就准备发送心跳包和超时监听
      */
     public void initSocketConnection() {
-        boolean isInitSuccess = true;
-        String reason = "socket is connected......";
+        // 运行于SocketInitHandler线程中
         try {
+            // 建立连接
             mSocket = new Socket();
             SocketAddress socketAddress = new InetSocketAddress(mServerHost, mServerPort);
             mSocket.connect(socketAddress, TIMEOUT_CONNECT_INIT);
             mSocket.setKeepAlive(true);
-            Log.d(TAG, "init success---->socket is connected......");
-            mSocketResponseHandler = new SocketResponseHandler(mContext, this);
+            // 启动SocketResponseHandler线程，监听服务器响应数据
+            mSocketResponseHandler = new SocketResponseHandler(mContext, EasySocket.this);
             mSocketResponseHandler.start();
-            postHeartBeatRunnable();
+            Log.d(TAG, "init success---->turn to link confirmation......");
+            // 链路确认
+            linkConfirmation();
+            // 启动心跳流程
+            postHeartBeatRunnableDelay();
         } catch (UnknownHostException e) {
             // TODO 初始化失败如何重连
             e.printStackTrace();
             Log.e(TAG, "init exception----> e = " + e);
             registerNetworkChangeBroadcast();
-            isInitSuccess = false;
-            reason = "" + e;
+            callbackSocketInitResult(false, "" + e);
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, "init exception----> e = " + e);
             registerNetworkChangeBroadcast();
-            isInitSuccess = false;
-            reason = "" + e;
-        } finally {
-            // 初始化结果切换到主线程回调
-            if (mOnSocketInitListener != null) {
-                final boolean isInitSuccessFinal = isInitSuccess;
-                final String reasonFinal = reason;
-                mUIHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (isInitSuccessFinal) {
-                            mOnSocketInitListener.onSocketInitSuccess(reasonFinal);
-                        } else {
-                            mOnSocketInitListener.onSocketInitFailure(reasonFinal);
-                        }
-                    }
-                });
-            }
-
+            callbackSocketInitResult(false, "" + e);
         }
     }
 
@@ -292,9 +279,59 @@ public class EasySocket implements OnSocketReadListener {
     }
 
     /**
+     * 发送链路确认，进行身份认证
+     * 处理问题：如何保证服务器是否已启动，需要发送身份确认消息或心跳数据，保证链路是通的，存在服务端已关闭，但connect是正常的
+     *
+     * @return 失败原因：连接成功返回null
+     */
+    private void linkConfirmation() {
+        SocketBean socketBean = new SocketBean();
+        socketBean.type = 0;
+        socketBean.deviceId = "001";
+        Log.d(TAG, " send link confirmation heart beat data,message: \n" + JsonUtil.toJson(socketBean));
+        enqueueRequest(socketBean, new OnSocketRequestListener() {
+            @Override
+            public void onSuccess() {
+                Log.d(TAG, "linkConfirmation -->socket is connected");
+                // 需要第二次连接确认
+                callbackSocketInitResult(true, "socket is connected......");
+            }
+
+            @Override
+            public void onFailure(String reason) {
+                Log.d(TAG, "linkConfirmation --> socket link init exception = " + reason);
+                // 初始化失败，回调给客户端处理，TODO 初始化失败或发送失败，待心跳重连还是延时重连？
+                callbackSocketInitResult(false, reason);
+            }
+        });
+    }
+
+    /**
+     * 处理Socket初始化结果的回调
+     *
+     * @param isInitSuccess
+     * @param reason
+     */
+    private void callbackSocketInitResult(final boolean isInitSuccess, final String reason) {
+        // 初始化结果切换到主线程回调
+        if (mOnSocketInitListener != null) {
+            mUIHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (isInitSuccess) {
+                        mOnSocketInitListener.onSocketInitSuccess(reason);
+                    } else {
+                        mOnSocketInitListener.onSocketInitFailure(reason);
+                    }
+                }
+            });
+        }
+    }
+
+    /**
      * 发送准备发送心跳包和超时监听Runnable
      */
-    private void postHeartBeatRunnable() {
+    private void postHeartBeatRunnableDelay() {
         mUIHandler.postDelayed(mHeartBeatRunnable, HEART_BEAT_RATE_INTERVAL_MILLIS);
         mUIHandler.postDelayed(mHeartBeatTimeoutRunnable, HEART_BEAT_TIMEOUT_INTERNAL_MILLIS);
     }
@@ -438,8 +475,7 @@ public class EasySocket implements OnSocketReadListener {
     private void sendHeartBeatData() {
         SocketBean socketBean = new SocketBean();
         socketBean.type = 0;
-        socketBean.deviceId = null;
-        socketBean.data = null;
+        socketBean.deviceId = "001";
         Log.d(TAG, "HeartBeatRunnable --> run ,send heart beat data,message: \n" + JsonUtil.toJson(socketBean));
         enqueueRequest(socketBean, new OnSocketRequestListener() {
             @Override
@@ -447,7 +483,7 @@ public class EasySocket implements OnSocketReadListener {
                 Log.d(TAG, "HeartBeatRunnable --> run ,send heart beat data success，I am alive");
                 // 继续发送延时心跳包和超时Runnable
                 removeHeartBeatRunnable();
-                postHeartBeatRunnable();
+                postHeartBeatRunnableDelay();
             }
 
             @Override
@@ -488,7 +524,7 @@ public class EasySocket implements OnSocketReadListener {
                 Log.d(TAG, "HeartBeatRunnable --> run ,距离上次发送成功时间间隔低于心跳高时间间隔，无需发送心跳包，心跳包重新计时");
                 // 心跳包重新计时
                 removeHeartBeatRunnable();
-                postHeartBeatRunnable();
+                postHeartBeatRunnableDelay();
             }
         }
     }

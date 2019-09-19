@@ -64,7 +64,10 @@ public class SocketResponseHandler extends Thread {
                             }
                         }
                     } else {
-                        Log.d(TAG, "Receive message from server is empty，just ignore");
+                        Log.d(TAG, "Receive message from server is empty，server is offline，just close the socket connection and reConnect");
+                        socket.close();
+                        // TODO 关闭后，何时重连
+                        //EasySocket.getInstance(mContext).reconnectSocket();
                     }
                 }
             } catch (IOException e) {
