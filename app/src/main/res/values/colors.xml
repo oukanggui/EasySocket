@@ -3,4 +3,50 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="colorApp">#fdd944</color>
+    <color name="color_transparent">#00000000</color>
+    <color name="color_blue">#2196f3</color>
+    <!--字体颜色-->
+    <color name="color_text">#5f646e</color>
+    <!--分割线的颜色-->
+    <color name="color_line">#F4F4F4</color>
+    <!--黑色-->
+    <color name="color_black">#FF000000</color>
+    <!--90% 透明色 -->
+    <color name="color_black_90">#e6000000</color>
+    <!--80% 透明色 -->
+    <color name="color_black_80">#cc000000</color>
+    <!--70% 透明色 -->
+    <color name="cmic_black_70">#b3000000</color>
+    <!--60% 透明色 -->
+    <color name="color_black_60">#99000000</color>
+    <!--50% 透明色 -->
+    <color name="color_black_50">#80000000</color>
+    <!--30% 透明色 -->
+    <color name="color_black_30">#4d000000</color>
+    <!--20% 透明色 -->
+    <color name="color_black_20">#33000000</color>
+    <!--10% 透明色 -->
+    <color name="color_black_10">#19000000</color>
+    <!-- 白色 -->
+    <color name="color_white">#FFFFFFFF</color>
+    <!-- 10% 透明白色 -->
+    <color name="color_white_10">#1AFFFFFF</color>
+    <!-- 20% 透明白色 -->
+    <color name="color_white_20">#33FFFFFF</color>
+    <!-- 30% 透明白色 -->
+    <!-- 40% 透明白色 -->
+    <color name="color_white_40">#66FFFFFF</color>
+    <!-- 50% 透明白色 -->
+    <color name="color_white_50">#77FFFFFF</color>
+    <!-- 60% 透明白色 -->
+    <color name="color_white_60">#88FFFFFF</color>
+    <!-- 60% 透明白色 -->
+    <color name="color_white_80">#ccffffff</color>
+    <!-- 90% 透明白色 -->
+    <color name="color_white_90">#e6ffffff</color>
+
+    <color name="color_grey_20">#33848484</color>
+
+
 </resources>

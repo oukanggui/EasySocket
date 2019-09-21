@@ -17,6 +17,6 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         //先启动服务器,再初始化客户端
-        EasyServerSocket.getInstance().startServer(this, 8082);
+        //EasyServerSocket.getInstance().startServer(this, 8082);
     }
 }

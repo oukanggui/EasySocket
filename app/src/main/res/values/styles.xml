@@ -8,4 +8,35 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="MainBottomTabStyle">
+        <!-- Customize your theme here. -->
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="MainBottomTabTextStyle">
+        <!-- Customize your theme here. -->
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/color_text</item>
+        <item name="android:textSize">@dimen/size_11</item>
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:layout_marginBottom">6dp</item>
+    </style>
+
+    <style name="MainBottomTabImageStyle">
+        <!-- Customize your theme here. -->
+        <item name="android:layout_width">@dimen/size_20</item>
+        <item name="android:layout_height">@dimen/size_20</item>
+        <item name="android:scaleType">fitXY</item>
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_marginTop">7dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
+        <item name="android:layout_centerHorizontal">true</item>
+    </style>
+
 </resources>

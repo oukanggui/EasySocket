@@ -1,34 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
+    android:background="@color/color_white"
+    android:clipChildren="false"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/main_tv_title"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/colorPrimary"
-        android:gravity="center_vertical"
-        android:paddingLeft="10dp"
-        android:text="设备001"
-        android:textColor="#ffffff"
-        android:textSize="16sp" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/main_rv_chat_list"
+    <FrameLayout
+        android:id="@+id/main_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="#ffffff"></androidx.recyclerview.widget.RecyclerView>
+        android:layout_weight="1" />
 
-    <Button
-        android:id="@+id/main_btn_send"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/main_bottom_view"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="7dp"
-        android:layout_marginBottom="7dp"
-        android:text="发送计数测试数据" />
+        android:clipChildren="false"
+        android:orientation="vertical">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/color_white"
+            android:clipChildren="false"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!--首页-->
+            <FrameLayout
+                android:id="@+id/main_rl_release"
+                style="@style/MainBottomTabStyle"
+                android:clipChildren="false">
+
+                <ImageView
+                    android:id="@+id/main_iv_release"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:layout_marginBottom="45dp"
+                    android:scaleType="center"
+                    android:src="@mipmap/ic_release" />
+
+                <TextView
+                    android:id="@+id/main_tv_release"
+                    style="@style/MainBottomTabTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:layout_marginBottom="6dp"
+                    android:text="添加设备" />
+            </FrameLayout>
+
+            <!--发布-->
+            <RelativeLayout
+                android:id="@+id/main_rl_home"
+                style="@style/MainBottomTabStyle">
+
+                <ImageView
+                    android:id="@+id/main_iv_home"
+                    style="@style/MainBottomTabImageStyle"
+                    android:src="@mipmap/ic_home_normal" />
+
+                <TextView
+                    android:id="@+id/main_tv_home"
+                    style="@style/MainBottomTabTextStyle"
+                    android:text="首页" />
+            </RelativeLayout>
+
+            <!--我的-->
+            <RelativeLayout
+                android:id="@+id/main_rl_mine"
+                style="@style/MainBottomTabStyle">
+
+                <ImageView
+                    android:id="@+id/main_iv_mine"
+                    style="@style/MainBottomTabImageStyle"
+                    android:src="@mipmap/ic_mine_normal" />
+
+                <TextView
+                    android:id="@+id/main_tv_mine"
+                    style="@style/MainBottomTabTextStyle"
+                    android:text="我的" />
+            </RelativeLayout>
+        </LinearLayout>
+        <!--底部三个button-->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/color_line" />
+    </LinearLayout>
 </LinearLayout>

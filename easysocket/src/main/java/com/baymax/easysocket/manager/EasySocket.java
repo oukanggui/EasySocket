@@ -19,7 +19,8 @@ import com.baymax.easysocket.listener.OnSocketInitListener;
 import com.baymax.easysocket.listener.OnSocketReadListener;
 import com.baymax.easysocket.listener.OnSocketRequestListener;
 import com.baymax.easysocket.listener.OnSocketResponseListener;
-import com.baymax.easysocket.util.JsonUtil;
+import com.baymax.utilslib.JsonUtil;
+import com.baymax.utilslib.NetworkUtil;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -533,9 +534,7 @@ public class EasySocket implements OnSocketReadListener {
     private class NetworkChangeReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-            if (networkInfo != null && networkInfo.isAvailable()) {
+            if (NetworkUtil.isNetworkAvailable(context)) {
                 Log.d(TAG, "Current network is available");
                 if (!isSocketValid()) {
                     Log.d(TAG, "Current network is available,socket wasn't initialized successfully or was close,just reinitialize");

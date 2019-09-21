@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--对话框背景透明-->
+    <style name="Transparentdialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item><!-- 去除白色边框 -->
+        <item name="android:windowFullscreen">true</item><!-- 全屏 -->
+        <item name="android:windowIsFloating">true</item><!-- 是否浮现在activity之上 -->
+        <item name="android:windowIsTranslucent">true</item><!-- 半透明 -->
+        <item name="android:windowNoTitle">true</item><!-- 无标题 -->
+        <item name="android:windowBackground">@color/colorDialogBackground</item><!-- 背景颜色 -->
+        <item name="android:backgroundDimEnabled">false</item><!--模糊-遮罩层设置-->
+    </style>
+
+    <style name="custom_progressBar_style_WT" parent="Widget.AppCompat.ProgressBar">
+        <item name="android:indeterminateDrawable">@drawable/custom_circle_progress_bar</item>
+    </style>
+</resources>

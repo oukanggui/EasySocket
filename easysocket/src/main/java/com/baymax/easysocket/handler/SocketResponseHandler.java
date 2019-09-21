@@ -7,8 +7,8 @@ import android.util.Log;
 import com.baymax.easysocket.bean.SocketBean;
 import com.baymax.easysocket.listener.OnSocketReadListener;
 import com.baymax.easysocket.manager.EasySocket;
-import com.baymax.easysocket.util.JsonUtil;
 import com.baymax.easysocket.util.StringUtil;
+import com.baymax.utilslib.JsonUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -48,7 +48,7 @@ public class SocketResponseHandler extends Thread {
                         message += line;
                     }
                     if (!StringUtil.isEmpty(message)) {
-                        SocketBean socketBean = JsonUtil.parse(message.trim(), SocketBean.class);
+                        SocketBean socketBean = JsonUtil.parseJson(message.trim(), SocketBean.class);
                         // 收到服务器过来的消息，有两种方案：
                         // 1、通过本地Broadcast发送出去
                         // 2、通过监听器

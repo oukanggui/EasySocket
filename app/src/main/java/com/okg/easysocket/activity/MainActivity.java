@@ -3,48 +3,82 @@ package com.okg.easysocket.activity;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
-import com.baymax.easysocket.base.BaseActivity;
-import com.baymax.easysocket.bean.SocketBean;
-import com.baymax.easysocket.listener.OnSocketInitListener;
-import com.baymax.easysocket.listener.OnSocketRequestListener;
-import com.baymax.easysocket.manager.EasySocket;
+import com.baymax.utilslib.SoftInputUtil;
+import com.baymax.utilslib.ToastUtil;
 import com.okg.easysocket.R;
-import com.okg.easysocket.adapter.ChatAdapter;
-import com.okg.easysocket.bean.ChatBean;
-import com.okg.easysocket.util.CommonUtil;
+import com.okg.easysocket.base.BaseAppActivity;
+import com.okg.easysocket.fragment.HomeFragment;
+import com.okg.easysocket.fragment.MineFragment;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.OnClick;
 
 
 /**
  * @author oukanggui
  * 演示Activity
  */
-public class MainActivity extends BaseActivity {
-    /**
-     * 服务器主机IP
-     */
-    private static final String SERVER_HOST = "baymax.in.3322.org";
-    /**
-     * 服务器Socket监听端口
-     */
-    private static final int SERVER_PORT = 32307;
-    private static final String DEVICE_ID = "001";
-    private Button btnSend;
-    private TextView tvTitle;
-    private RecyclerView rvChatRecyclerView;
-    private int count = 0;
-    private List<ChatBean> mChatList = new ArrayList<>();
-    private ChatAdapter mChatAdapter;
+public class MainActivity extends BaseAppActivity {
+    @BindView(R.id.main_root_view)
+    LinearLayout mainRootView;
+
+    @BindView(R.id.main_bottom_view)
+    LinearLayout mainBottomView;
+
+    @BindView(R.id.main_rl_home)
+    View bottomHome;
+
+    @BindView(R.id.main_rl_release)
+    View bottomRelease;
+
+    @BindView(R.id.main_rl_mine)
+    View bottomMine;
+
+    @BindView(R.id.main_tv_home)
+    TextView tv_home;
+
+    @BindView(R.id.main_tv_release)
+    TextView tv_release;
+
+    @BindView(R.id.main_tv_mine)
+    TextView tv_mine;
+
+    @BindView(R.id.main_iv_home)
+    ImageView iv_home;
+
+    @BindView(R.id.main_iv_release)
+    ImageView iv_release;
+
+    @BindView(R.id.main_iv_mine)
+    ImageView iv_mine;
+
+    boolean isFirst = true;
+
+    private List<Fragment> fragmentList;
+    private HomeFragment homeFragment;
+    private MineFragment mineFragment;
+    private boolean isExit = false;
+    private Handler handler = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == 0x123) {
+                isExit = false;
+            }
+        }
+    };
 
     @Override
     public int getLayoutId() {
@@ -53,88 +87,108 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void initView(Bundle savedInstanceState) {
-        btnSend = findViewById(R.id.main_btn_send);
-        tvTitle = findViewById(R.id.main_tv_title);
-        rvChatRecyclerView = findViewById(R.id.main_rv_chat_list);
+        initFragment();
+        switchFragment(0);
+        //初始选中首页
+        changeBarState(R.id.main_rl_home);
     }
+
+    @OnClick({R.id.main_rl_home, R.id.main_rl_release, R.id.main_rl_mine})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.main_rl_home:
+                changeBarState(R.id.main_rl_home);
+                switchFragment(0);
+                break;
+            case R.id.main_rl_release:
+                //changeBarState(R.id.main_rl_release);
+                ToastUtil.showToast(mContext, "功能建设中");
+                break;
+            case R.id.main_rl_mine:
+                changeBarState(R.id.main_rl_mine);
+                switchFragment(1);
+                break;
+            default:
+                break;
+        }
+
+    }
+
 
     @Override
     public void initData() {
-        tvTitle.setText("设备" + DEVICE_ID + "---连接中");
-        btnSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (CommonUtil.isFastDoubleClick()) {
-                    return;
-                }
-                final SocketBean socketBean = new SocketBean();
-                socketBean.type = 1;
-                socketBean.deviceId = DEVICE_ID;
-                socketBean.data = "" + count++;
-                EasySocket.getInstance(MainActivity.this).enqueueRequest(socketBean, new OnSocketRequestListener() {
-                    @Override
-                    public void onSuccess() {
-                        Toast.makeText(MainActivity.this, "发送成功", Toast.LENGTH_SHORT).show();
-                        ChatBean chatBean = new ChatBean(socketBean.data, ChatBean.TYPE_SENT);
-                        mChatList.add(chatBean);
-                        //调用适配器的notifyItemInserted()用于通知列表有新的数据插入，这样新增的一条消息才能在RecyclerView中显示
-                        mChatAdapter.notifyItemInserted(mChatList.size() - 1);
-                        //调用scrollToPosition()方法将显示的数据定位到最后一行，以保证可以看到最后发出的一条消息
-                        rvChatRecyclerView.scrollToPosition(mChatList.size() - 1);
-                    }
 
-                    @Override
-                    public void onFailure(String reason) {
-                        Toast.makeText(MainActivity.this, "发送成功失败，reason = " + reason, Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-        });
-
-        //LinearLayoutLayout即线性布局，创建对象后把它设置到RecyclerView当中
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        rvChatRecyclerView.setLayoutManager(layoutManager);
-        //创建MsgAdapter的实例并将数据传入到MsgAdapter的构造函数中
-        mChatAdapter = new ChatAdapter(mChatList);
-        rvChatRecyclerView.setAdapter(mChatAdapter);
-
-        // 启动Socket连接
-        Handler handler = new Handler(getMainLooper());
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //初始化EasySocket管理器
-                EasySocket.getInstance(MainActivity.this).init(SERVER_HOST, SERVER_PORT, new OnSocketInitListener() {
-                    @Override
-                    public void onSocketInitSuccess(String message) {
-                        tvTitle.setText("设备" + DEVICE_ID + "---已连接上");
-                        btnSend.setEnabled(true);
-                        Toast.makeText(MainActivity.this, "服务器已连接上", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onSocketInitFailure(String reason) {
-                        tvTitle.setText("设备" + DEVICE_ID + "---连接失败");
-                        btnSend.setEnabled(false);
-                    }
-                });
-            }
-        }, 1000);
     }
 
     @Override
-    protected boolean isNeedRegisterSocketResponseListener() {
-        return true;
+    protected void onResume() {
+        super.onResume();
+    }
+
+    private void initFragment() {
+        fragmentList = new ArrayList<>();
+        homeFragment = new HomeFragment();
+        mineFragment = new MineFragment();
+        fragmentList.add(homeFragment);
+        fragmentList.add(mineFragment);
+        for (Fragment fragment : fragmentList) {
+            getSupportFragmentManager().beginTransaction().add(R.id.main_fragment_container, fragment).commit();
+        }
+    }
+
+    private void hideFragments() {
+        for (Fragment fragment : fragmentList) {
+            getSupportFragmentManager().beginTransaction().hide(fragment).commit();
+        }
+    }
+
+    private void switchFragment(int position) {
+        hideFragments();
+        getSupportFragmentManager().beginTransaction().show(fragmentList.get(position)).commit();
+    }
+
+    private void changeBarState(int viewId) {
+        clearBarState();
+        int color = ContextCompat.getColor(this, R.color.colorApp);
+        if (viewId == R.id.main_rl_home) {
+            tv_home.setTextColor(color);
+            iv_home.setImageResource(R.mipmap.ic_home_press);
+            return;
+        }
+        if (viewId == R.id.main_rl_release) {
+            tv_release.setTextColor(color);
+            return;
+        }
+        if (viewId == R.id.main_rl_mine) {
+            tv_mine.setTextColor(color);
+            iv_mine.setImageResource(R.mipmap.ic_mine_press);
+            return;
+        }
+
+        return;
+    }
+
+    private void clearBarState() {
+        int color = ContextCompat.getColor(this, R.color.color_text);
+        tv_home.setTextColor(color);
+        tv_release.setTextColor(color);
+        tv_mine.setTextColor(color);
+
+        iv_home.setImageResource(R.mipmap.ic_home_normal);
+        iv_mine.setImageResource(R.mipmap.ic_mine_normal);
+
     }
 
     @Override
-    protected void onHandleSocketResponse(SocketBean socketBean) {
-        ChatBean chatBean = new ChatBean(socketBean.from == SocketBean.FROM_APP ? socketBean.msg : socketBean.data, ChatBean.TYPE_RECEIVED);
-        mChatList.add(chatBean);
-        //调用适配器的notifyItemInserted()用于通知列表有新的数据插入，这样新增的一条消息才能在RecyclerView中显示
-        mChatAdapter.notifyItemInserted(mChatList.size() - 1);
-        //调用scrollToPosition()方法将显示的数据定位到最后一行，以保证可以看到最后发出的一条消息
-        rvChatRecyclerView.scrollToPosition(mChatList.size() - 1);
+    public void onBackPressed() {
+        SoftInputUtil.hideSoftInput(this);
+        if (isExit) {
+            finish();
+        } else {
+            ToastUtil.showToast(MainActivity.this, "再按一下退出应用");
+            handler.sendEmptyMessageDelayed(0x123, 2000);
+            isExit = true;
+        }
     }
 }
 

@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">base</string>
+    <string name="text_loading">精彩马上呈现</string>
+    <string name="text_empty">这里空空如也</string>
+    <string name="text_retry">糟糕，刚才没反应过来</string>
+    <string name="text_network_retry">网络开小差了，请检查网络设置</string>
+    <string name="text_goto_setting">去设置</string>
+    <string name="text_refresh_again">再刷一刷</string>
+</resources>
