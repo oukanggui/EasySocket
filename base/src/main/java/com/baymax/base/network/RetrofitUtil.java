@@ -48,6 +48,7 @@ public class RetrofitUtil {
 
     /**
      * 把JsonString字符串转化为RequestBody对象，用户post请求创建RequestBody
+     *
      * @param jsonStr
      * @return
      */

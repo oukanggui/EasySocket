@@ -19,7 +19,6 @@
         android:layout_height="wrap_content"
         android:clipChildren="false"
         android:orientation="vertical">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -27,8 +26,22 @@
             android:clipChildren="false"
             android:gravity="center_vertical"
             android:orientation="horizontal">
-
             <!--首页-->
+            <RelativeLayout
+                android:id="@+id/main_rl_home"
+                style="@style/MainBottomTabStyle">
+
+                <ImageView
+                    android:id="@+id/main_iv_home"
+                    style="@style/MainBottomTabImageStyle"
+                    android:src="@mipmap/ic_home_normal" />
+
+                <TextView
+                    android:id="@+id/main_tv_home"
+                    style="@style/MainBottomTabTextStyle"
+                    android:text="首页" />
+            </RelativeLayout>
+            <!--发布-->
             <FrameLayout
                 android:id="@+id/main_rl_release"
                 style="@style/MainBottomTabStyle"
@@ -52,23 +65,6 @@
                     android:layout_marginBottom="6dp"
                     android:text="添加设备" />
             </FrameLayout>
-
-            <!--发布-->
-            <RelativeLayout
-                android:id="@+id/main_rl_home"
-                style="@style/MainBottomTabStyle">
-
-                <ImageView
-                    android:id="@+id/main_iv_home"
-                    style="@style/MainBottomTabImageStyle"
-                    android:src="@mipmap/ic_home_normal" />
-
-                <TextView
-                    android:id="@+id/main_tv_home"
-                    style="@style/MainBottomTabTextStyle"
-                    android:text="首页" />
-            </RelativeLayout>
-
             <!--我的-->
             <RelativeLayout
                 android:id="@+id/main_rl_mine"

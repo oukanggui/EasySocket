@@ -65,17 +65,16 @@
             android:layout_gravity="right|center_vertical"
             android:gravity="center_vertical">
 
-            <ImageView
-                android:layout_width="9dp"
-                android:layout_height="11dp"
-                android:layout_marginLeft="15dp"
-                android:src="@mipmap/ic_more" />
-
             <com.baymax.base.widget.CircleImageView
                 android:id="@+id/mine_iv_head"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:src="@mipmap/ic_default_head" />
+            <ImageView
+                android:layout_width="9dp"
+                android:layout_height="11dp"
+                android:layout_marginLeft="15dp"
+                android:src="@mipmap/ic_more" />
         </LinearLayout>
 
     </FrameLayout>
