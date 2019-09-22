@@ -20,6 +20,7 @@ import com.okg.easysocket.api.login.RegisterInterface;
 import com.okg.easysocket.bean.ResponseMsg;
 import com.okg.easysocket.constant.AppConstants;
 import com.baymax.base.image.ImageLoader;
+import com.okg.easysocket.manager.UserInfoManager;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -214,10 +215,8 @@ public class RegisterActivity extends BaseTitleBarActivity implements View.OnCli
                     ResponseMsg responseMsg = response.body();
                     if (responseMsg != null && responseMsg.getCode() == 1) {
                         ToastUtil.showToast(mContext, responseMsg.getMsg());
-                        SharedPreferencesUtil.saveString(mContext, AppConstants.USER_ACCOUNT, phone);
-                        SharedPreferencesUtil.saveString(mContext, AppConstants.USER_PASSWORD, password);
+                        UserInfoManager.getInstance(mContext).saveUserInfo(phone, password);
                         finish();
-                        overridePendingTransition(R.anim.anim_activity_enter_left, R.anim.anim_activity_exit_right);
                     } else {
                         ToastUtil.showToast(mContext, responseMsg.getMsg());
                     }

@@ -9,6 +9,7 @@ import com.baymax.utilslib.ToastUtil;
 import com.okg.easysocket.R;
 import com.okg.easysocket.base.BaseAppTitleBarActivity;
 import com.okg.easysocket.constant.AppConstants;
+import com.okg.easysocket.manager.UserInfoManager;
 
 import butterknife.OnClick;
 
@@ -44,8 +45,7 @@ public class SettingActivity extends BaseAppTitleBarActivity {
                 break;
             case R.id.setting_exit:
                 //清空用户数据
-                SharedPreferencesUtil.saveString(mContext, AppConstants.USER_ACCOUNT, "");
-                SharedPreferencesUtil.saveString(mContext, AppConstants.USER_PASSWORD, "");
+                UserInfoManager.getInstance(mContext).clearUserInfo();
                 startActivity(new Intent(mContext, LoginActivity.class));
                 finish();
                 break;

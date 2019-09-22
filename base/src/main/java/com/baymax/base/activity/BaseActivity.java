@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.Nullable;
@@ -32,6 +33,9 @@ public abstract class BaseActivity extends FragmentActivity {
         mContext = this;
         setContentView(getLayoutId());
         //StatusBarCompat.setStatusBarColor(this, getResources().getColor(R.color.colorApp));
+        if (getStateViewRoot() != null) {
+            mStateView = StateView.inject(getStateViewRoot());
+        }
         initView(savedInstanceState);
         initData();
         AppManager.getAppManager().addActivity(this);
@@ -71,6 +75,13 @@ public abstract class BaseActivity extends FragmentActivity {
         loadingDialog.setTitle(title);
         loadingDialog.show();
 
+    }
+
+    /**
+     * StateView的根布局，默认是不绑定，如果需要变换可以重写此方法
+     */
+    public View getStateViewRoot() {
+        return null;
     }
 
     public void dismissLoadingDialog() {

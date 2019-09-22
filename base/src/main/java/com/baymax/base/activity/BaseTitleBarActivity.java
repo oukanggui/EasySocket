@@ -6,6 +6,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewStub;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.base.R;
@@ -23,13 +24,17 @@ public abstract class BaseTitleBarActivity extends BaseActivity {
     private static final String TAG = BaseTitleBarActivity.class.getSimpleName();
     // View start
 
-    public FrameLayout mTitleLayout = null;
+    public FrameLayout mTitleLayout;
 
-    private View mHeadLayout = null;
+    private View mHeadLayout;
 
-    private View mBackLayout = null;
+    private View mBackLayout;
 
-    private TextView mTitleTView = null;
+    private View mRightLayout;
+
+    private ImageView mIvRightIcon;
+
+    private TextView mTitleTView;
 
     private FrameLayout mContainer;
     // View end
@@ -41,7 +46,7 @@ public abstract class BaseTitleBarActivity extends BaseActivity {
             return;
         }
         setContentView(R.layout.base_ui_layout);
-        mContainer = (FrameLayout) findViewById(R.id.container);
+        mContainer = findViewById(R.id.container);
         mContainer.addView(view, params);
     }
 
@@ -51,7 +56,7 @@ public abstract class BaseTitleBarActivity extends BaseActivity {
             super.setContentView(layoutResID);
         } else {
             super.setContentView(R.layout.base_ui_layout);
-            mContainer = (FrameLayout) findViewById(R.id.container);
+            mContainer = findViewById(R.id.container);
             if (layoutResID != R.layout.base_ui_layout) {
                 View view = LayoutInflater.from(this).inflate(layoutResID, null);
                 mContainer.addView(view);
@@ -67,7 +72,7 @@ public abstract class BaseTitleBarActivity extends BaseActivity {
             return;
         }
         setContentView(R.layout.base_ui_layout);
-        mContainer = (FrameLayout) findViewById(R.id.container);
+        mContainer = findViewById(R.id.container);
         mContainer.addView(view);
     }
 
@@ -82,8 +87,7 @@ public abstract class BaseTitleBarActivity extends BaseActivity {
         } else {
             throw new IllegalArgumentException("Need show head layout, but no head view.");
         }
-        //mTitleLayout = (FrameLayout) mHeadLayout.findViewById(R.id.base_);
-        mTitleLayout = (FrameLayout) findViewById(R.id.base_title_layout);
+        mTitleLayout = findViewById(R.id.base_title_layout);
         //StatusBarUtil.setTranslucentForImageView(this, 0, mTitleLayout);
         //StatusBarUtil.setStatusBarDark(this,true);
         // 1、返回
@@ -100,6 +104,18 @@ public abstract class BaseTitleBarActivity extends BaseActivity {
         }
         // 2、Title
         mTitleTView = mHeadLayout.findViewById(R.id.base_title);
+
+        // 3、Right
+        mIvRightIcon = mHeadLayout.findViewById(R.id.base_iv_right);
+        mRightLayout = mHeadLayout.findViewById(R.id.base_title_right_layout);
+        if (mRightLayout != null) {
+            mRightLayout.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onRightClick();
+                }
+            });
+        }
     }
 
 
@@ -142,11 +158,18 @@ public abstract class BaseTitleBarActivity extends BaseActivity {
      */
     public void showBackLayout(boolean isShow) {
         if (mBackLayout != null) {
-            if (isShow) {
-                mBackLayout.setVisibility(View.VISIBLE);
-            } else {
-                mBackLayout.setVisibility(View.GONE);
-            }
+            mBackLayout.setVisibility(isShow ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    /**
+     * 是否显示右边布局
+     *
+     * @return
+     */
+    public void showTitleRightLayout(boolean isShow) {
+        if (mRightLayout != null) {
+            mRightLayout.setVisibility(isShow ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -161,11 +184,7 @@ public abstract class BaseTitleBarActivity extends BaseActivity {
      */
     public void showTitle(boolean isShow) {
         if (mTitleTView != null) {
-            if (isShow) {
-                mTitleTView.setVisibility(View.VISIBLE);
-            } else {
-                mTitleTView.setVisibility(View.GONE);
-            }
+            mTitleTView.setVisibility(isShow ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -214,6 +233,25 @@ public abstract class BaseTitleBarActivity extends BaseActivity {
         if (mTitleLayout != null && resId > 0) {
             mTitleLayout.setBackgroundResource(resId);
         }
+    }
+
+    /**
+     * 设置右边图标
+     *
+     * @param resId
+     */
+    public void setRightIcon(int resId) {
+        if (mIvRightIcon != null && resId > 0) {
+            showTitleRightLayout(true);
+            mIvRightIcon.setImageResource(resId);
+        }
+    }
+
+    /**
+     * 右边布局点击后回调接口
+     */
+    protected void onRightClick() {
+
     }
 
 }

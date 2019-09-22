@@ -12,13 +12,13 @@ import android.widget.EditText;
 
 import com.baymax.base.activity.BaseTitleBarActivity;
 import com.baymax.base.network.RetrofitUtil;
-import com.baymax.utilslib.SharedPreferencesUtil;
 import com.baymax.utilslib.TextUtil;
 import com.baymax.utilslib.ToastUtil;
 import com.okg.easysocket.R;
 import com.okg.easysocket.api.login.LoginInterface;
 import com.okg.easysocket.bean.ResponseMsg;
 import com.okg.easysocket.constant.AppConstants;
+import com.okg.easysocket.manager.UserInfoManager;
 
 import java.util.Date;
 
@@ -66,8 +66,8 @@ public class LoginActivity extends BaseTitleBarActivity implements View.OnClickL
 
     @Override
     public void initView(Bundle savedInstanceState) {
-        inputNumber = (EditText) findViewById(R.id.input_number);
-        inputPassword = (EditText) findViewById(R.id.input_password);
+        inputNumber = findViewById(R.id.input_number);
+        inputPassword = findViewById(R.id.input_password);
         deleteNumber = findViewById(R.id.number_delete);
         deleteNumber.setOnClickListener(this);
         deletePassword = findViewById(R.id.password_delete);
@@ -136,7 +136,6 @@ public class LoginActivity extends BaseTitleBarActivity implements View.OnClickL
 
         if (viewId == R.id.password_delete) {
             inputPassword.setText("");
-            inputNumber.setText("");
             return;
         }
 
@@ -151,8 +150,7 @@ public class LoginActivity extends BaseTitleBarActivity implements View.OnClickL
         }
 
         if (viewId == R.id.logon_register) {
-            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-            startActivity(intent);
+            startActivity(RegisterActivity.class);
             overridePendingTransition(R.anim.anim_activity_enter_left, R.anim.anim_activity_exit_right);
             return;
         }
@@ -164,8 +162,8 @@ public class LoginActivity extends BaseTitleBarActivity implements View.OnClickL
     protected void onResume() {
         super.onResume();
         // TODO
-        inputNumber.setText(SharedPreferencesUtil.getString(this, AppConstants.USER_ACCOUNT, null));
-        inputPassword.setText(SharedPreferencesUtil.getString(this, AppConstants.USER_PASSWORD, null));
+        inputNumber.setText(UserInfoManager.getInstance(mContext).getUserAccount());
+        inputPassword.setText(UserInfoManager.getInstance(mContext).getUserPassword());
     }
 
     private void login() {
@@ -190,24 +188,21 @@ public class LoginActivity extends BaseTitleBarActivity implements View.OnClickL
             return;
         }
         Retrofit retrofit = RetrofitUtil.createRetrofit();
-        Call<ResponseMsg> call = retrofit.create(LoginInterface.class).login(account, password);
+        Call<ResponseMsg<String>> call = retrofit.create(LoginInterface.class).login(account, password);
         showLoadingDialog("登录中");
-        call.enqueue(new Callback<ResponseMsg>() {
+        call.enqueue(new Callback<ResponseMsg<String>>() {
             @Override
-            public void onResponse(Call<ResponseMsg> call, Response<ResponseMsg> response) {
+            public void onResponse(Call<ResponseMsg<String>> call, Response<ResponseMsg<String>> response) {
                 dismissLoadingDialog();
                 ResponseMsg responseMsg = response.body();
                 if (responseMsg == null) {
                     return;
                 }
                 if (responseMsg.getCode() == 1) {
-                    //UserInfo userInfo = JsonUtil.parse(responseMsg.getExtra(), UserInfo.class);
-                    //SharePrefrenceUtils.saveUserInfo(userInfo);
                     ToastUtil.showToast(mContext, responseMsg.getMsg());
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
-                    SharedPreferencesUtil.saveString(mContext, AppConstants.USER_ACCOUNT, account);
-                    SharedPreferencesUtil.saveString(mContext, AppConstants.USER_PASSWORD, password);
+                    UserInfoManager.getInstance(mContext).saveUserInfo(account, password);
                     overridePendingTransition(R.anim.anim_activity_enter_left, R.anim.anim_activity_exit_right);
                     finish();
                 } else {
@@ -216,7 +211,7 @@ public class LoginActivity extends BaseTitleBarActivity implements View.OnClickL
             }
 
             @Override
-            public void onFailure(Call<ResponseMsg> call, Throwable t) {
+            public void onFailure(Call<ResponseMsg<String>> call, Throwable t) {
                 dismissLoadingDialog();
                 ToastUtil.showToast(mContext, AppConstants.ERROR_MSG);
             }

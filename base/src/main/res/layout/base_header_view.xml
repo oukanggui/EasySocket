@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:background="@color/colorTitle">
-
+        <!--左边返回图标-->
         <FrameLayout
             android:id="@+id/base_back"
             android:layout_width="48dp"
@@ -23,13 +23,30 @@
                 android:scaleType="fitCenter"
                 android:src="@mipmap/ic_back_black" />
         </FrameLayout>
+        <!--中间标题-->
+        <FrameLayout
+            android:id="@+id/base_title_right_layout"
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:paddingRight="12dp"
+            android:visibility="gone">
 
+            <ImageView
+                android:id="@+id/base_iv_right"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical"
+                android:scaleType="fitCenter"
+                android:src="@mipmap/ic_default_placeholder" />
+        </FrameLayout>
+        <!--右边图标-->
         <TextView
             android:id="@+id/base_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="title"
+            android:text=""
             android:textColor="@color/colorTitleText"
             android:textSize="@dimen/size_title" />
     </FrameLayout>

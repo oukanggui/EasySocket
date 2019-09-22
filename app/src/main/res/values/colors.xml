@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorPrimaryDark">@color/colorApp</color>
     <color name="colorAccent">#D81B60</color>
     <color name="colorApp">#fdd944</color>
     <color name="color_transparent">#00000000</color>
@@ -10,6 +10,7 @@
     <color name="color_text">#5f646e</color>
     <!--分割线的颜色-->
     <color name="color_line">#F4F4F4</color>
+    <color name="color_hint">#bdbdbd</color>
     <!--黑色-->
     <color name="color_black">#FF000000</color>
     <!--90% 透明色 -->
@@ -28,6 +29,7 @@
     <color name="color_black_20">#33000000</color>
     <!--10% 透明色 -->
     <color name="color_black_10">#19000000</color>
+    <color name="color_black_5">#0D000000</color>
     <!-- 白色 -->
     <color name="color_white">#FFFFFFFF</color>
     <!-- 10% 透明白色 -->

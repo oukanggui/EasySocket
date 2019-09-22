@@ -1,8 +1,5 @@
 package com.okg.easysocket.base;
 
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.baymax.base.activity.BaseActivity;
 
 import butterknife.ButterKnife;

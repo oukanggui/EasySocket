@@ -101,8 +101,7 @@ public class MainActivity extends BaseAppActivity {
                 switchFragment(0);
                 break;
             case R.id.main_rl_release:
-                //changeBarState(R.id.main_rl_release);
-                ToastUtil.showToast(mContext, "功能建设中");
+                startActivity(DeviceEditActivity.class);
                 break;
             case R.id.main_rl_mine:
                 changeBarState(R.id.main_rl_mine);

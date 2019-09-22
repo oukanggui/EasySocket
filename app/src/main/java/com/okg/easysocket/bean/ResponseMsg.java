@@ -2,7 +2,7 @@ package com.okg.easysocket.bean;
 
 import com.okg.easysocket.proguard.IProguard;
 
-public class ResponseMsg implements IProguard {
+public class ResponseMsg<T> implements IProguard {
 
     /**
      * 状态码
@@ -15,7 +15,7 @@ public class ResponseMsg implements IProguard {
     /**
      * 业务数据
      */
-    private String data;
+    private T data;
 
     public int getCode() {
         return this.code;
@@ -33,11 +33,11 @@ public class ResponseMsg implements IProguard {
         this.msg = msg;
     }
 
-    public String getData() {
+    public T getData() {
         return this.data;
     }
 
-    public void setData(String data) {
+    public void setData(T data) {
         this.data = data;
     }
 }

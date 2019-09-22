@@ -11,6 +11,7 @@ import com.baymax.utilslib.SharedPreferencesUtil;
 import com.baymax.utilslib.TextUtil;
 import com.baymax.utilslib.ToastUtil;
 import com.okg.easysocket.R;
+import com.okg.easysocket.activity.DeviceListActivity;
 import com.okg.easysocket.activity.SettingActivity;
 import com.okg.easysocket.base.BaseAppFragment;
 import com.okg.easysocket.constant.AppConstants;
@@ -59,8 +60,10 @@ public class MineFragment extends BaseAppFragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.mine_user_info:
-            case R.id.mine_device:
                 ToastUtil.showToast(mActivity, "功能规划中，敬请期待");
+                break;
+            case R.id.mine_device:
+                startActivity(new Intent(mActivity, DeviceListActivity.class));
                 break;
             case R.id.mine_setting:
                 startActivity(new Intent(mActivity, SettingActivity.class));
