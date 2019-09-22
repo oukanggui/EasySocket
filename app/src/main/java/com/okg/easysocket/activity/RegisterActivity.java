@@ -205,12 +205,14 @@ public class RegisterActivity extends BaseTitleBarActivity implements View.OnCli
                 public void onResponse(Call<ResponseMsg> call, Response<ResponseMsg> response) {
                     dismissLoadingDialog();
                     ResponseMsg responseMsg = response.body();
+                    if (responseMsg == null) {
+                        ToastUtil.showToast(mContext, "注册异常");
+                        return;
+                    }
+                    ToastUtil.showToast(mContext, responseMsg.getMsg());
                     if (responseMsg != null && responseMsg.getCode() == 1) {
-                        ToastUtil.showToast(mContext, responseMsg.getMsg());
                         UserInfoManager.getInstance(mContext).saveUserInfo(phone, password);
                         finish();
-                    } else {
-                        ToastUtil.showToast(mContext, responseMsg.getMsg());
                     }
                 }
 
