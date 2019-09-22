@@ -34,17 +34,9 @@ public class RegisterActivity extends BaseTitleBarActivity implements View.OnCli
     private View bt_register;
     private EditText et_phone, et_password, et_password_again, et_qrcode;
     private ImageView iv_deletePhone, iv_deletePsw, iv_deletePswAgain, iv_qrcode;
-    private String password = null;
-    private String passwordAgain = null;
-    private String phone = null;
-
-    @Override
-    public void onBackPressed() {
-        Intent intent = getIntent();
-        setResult(1, intent);
-        finish();
-        overridePendingTransition(R.anim.anim_activity_enter_left, R.anim.anim_activity_exit_right);
-    }
+    private String password;
+    private String passwordAgain;
+    private String phone;
 
     @Override
     public int getLayoutId() {
