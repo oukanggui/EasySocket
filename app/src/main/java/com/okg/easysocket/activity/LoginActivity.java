@@ -196,6 +196,7 @@ public class LoginActivity extends BaseTitleBarActivity implements View.OnClickL
                 dismissLoadingDialog();
                 ResponseMsg responseMsg = response.body();
                 if (responseMsg == null) {
+                    ToastUtil.showToast(mContext, "登录异常");
                     return;
                 }
                 if (responseMsg.getCode() == 1) {
