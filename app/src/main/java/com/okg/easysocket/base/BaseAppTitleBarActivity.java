@@ -1,19 +1,16 @@
 package com.okg.easysocket.base;
 
-import android.view.View;
-import android.view.ViewGroup;
-
-import com.baymax.base.activity.BaseActivity;
+import com.baymax.base.activity.BaseTitleBarActivity;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 /**
  * @author Baymax
- * @date 2019-09-21
- * 描述：持ButterKnife注入的Activity基类，需要使用BufferKnife的Activity需要继承该类
+ * @date 2019-09-22
+ * 描述：持ButterKnife注入的Activity TitleBar基类，需要使用BufferKnife的Activity需要继承该类
  */
-public abstract class BaseAppActivity extends BaseActivity {
+public abstract class BaseAppTitleBarActivity extends BaseTitleBarActivity {
     Unbinder unbinder;
 
     @Override

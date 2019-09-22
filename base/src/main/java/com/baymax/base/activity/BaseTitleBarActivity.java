@@ -18,9 +18,9 @@ import com.example.base.R;
  * 修改时间: 2018/1/18 <br>
  * ************************************************
  */
-public abstract class BaseToorBarActivity extends BaseActivity {
+public abstract class BaseTitleBarActivity extends BaseActivity {
 
-    private static final String TAG = BaseToorBarActivity.class.getSimpleName();
+    private static final String TAG = BaseTitleBarActivity.class.getSimpleName();
     // View start
 
     public FrameLayout mTitleLayout = null;

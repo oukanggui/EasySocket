@@ -36,10 +36,21 @@ public class RetrofitUtil {
         return retrofit;
     }
 
+    /**
+     * 把JsonObject转化为RequestBody对象，用户post请求创建RequestBody
+     *
+     * @param jsonObject
+     * @return
+     */
     public static RequestBody createRequestBody(JSONObject jsonObject) {
         return createRequestBody(jsonObject.toString());
     }
 
+    /**
+     * 把JsonString字符串转化为RequestBody对象，用户post请求创建RequestBody
+     * @param jsonStr
+     * @return
+     */
     public static RequestBody createRequestBody(String jsonStr) {
         RequestBody body = RequestBody.create(MediaType.parse("application/json"), jsonStr);
         return body;

@@ -8,7 +8,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.baymax.base.activity.BaseToorBarActivity;
+
+import com.baymax.base.activity.BaseTitleBarActivity;
 import com.baymax.base.constant.Constants;
 import com.baymax.base.network.RetrofitUtil;
 import com.baymax.utilslib.SharedPreferencesUtil;
@@ -26,7 +27,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 
-public class RegisterActivity extends BaseToorBarActivity implements View.OnClickListener {
+public class RegisterActivity extends BaseTitleBarActivity implements View.OnClickListener {
 
     private static final String URL_GET_QRCODE = Constants.BASE_URL + "/user/code";
     private View bt_register;
@@ -59,11 +60,8 @@ public class RegisterActivity extends BaseToorBarActivity implements View.OnClic
         et_qrcode = findViewById(R.id.register_et_qrcode);
 
         iv_deletePhone = findViewById(R.id.register_delete_phone);
-        iv_deletePhone.setVisibility(View.GONE);
         iv_deletePsw = findViewById(R.id.register_delete_psw);
-        iv_deletePsw.setVisibility(View.GONE);
         iv_deletePswAgain = findViewById(R.id.register_delete_psw_again);
-        iv_deletePswAgain.setVisibility(View.GONE);
         iv_qrcode = findViewById(R.id.register_iv_qrcode);
 
         iv_qrcode.setOnClickListener(this);

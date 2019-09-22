@@ -1,7 +1,7 @@
 package com.baymax.base.constant;
 
 /**
- * Created by 柯康娣 on 2018/1/29.
+ * @author oukanggui on 2018/1/29.
  */
 
 public class Constants {

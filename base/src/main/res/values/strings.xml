@@ -6,4 +6,9 @@
     <string name="text_network_retry">网络开小差了，请检查网络设置</string>
     <string name="text_goto_setting">去设置</string>
     <string name="text_refresh_again">再刷一刷</string>
+
+    <!--BaseQuickAdapter load more start-->
+    <string name="loading">拼命加载中...</string>
+    <string name="load_failed">加载失败，点击重试</string>
+    <string name="load_end">没有更多数据</string>
 </resources>

@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:background="@color/color_white"
     android:orientation="vertical">
-    <!--title-->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -19,50 +18,6 @@
             android:orientation="vertical"
             android:paddingLeft="30dp"
             android:paddingRight="30dp">
-
-            <Button
-                android:id="@+id/logon_button"
-                android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="30dp"
-                android:background="@drawable/button_orange_stroke"
-                android:gravity="center"
-                android:text="登  录"
-                android:textColor="@color/color_white"
-                android:textSize="@dimen/size_18" />
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_input_edit_stroke"
-                android:paddingLeft="8dp"
-                android:paddingTop="13dp"
-                android:paddingRight="10dp"
-                android:paddingBottom="13dp">
-
-                <EditText
-                    android:id="@+id/input_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:drawableLeft="@mipmap/ic_password"
-                    android:drawablePadding="5dp"
-                    android:hint="请输入六位密码"
-                    android:inputType="textPassword"
-                    android:maxLength="11"
-                    android:paddingLeft="5dp"
-                    android:textColor="@color/color_black"
-                    android:textColorHint="@color/color_text"
-                    android:textSize="@dimen/size_14" />
-
-                <ImageView
-                    android:id="@+id/password_delete"
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
-                    android:layout_gravity="right|center_vertical"
-                    android:src="@mipmap/ic_delete_input" />
-            </FrameLayout>
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -94,9 +49,53 @@
                     android:layout_width="15dp"
                     android:layout_height="15dp"
                     android:layout_gravity="right|center_vertical"
-                    android:src="@mipmap/ic_delete_input" />
+                    android:src="@mipmap/ic_delete_input"
+                    android:visibility="gone" />
             </FrameLayout>
 
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_input_edit_stroke"
+                android:paddingLeft="8dp"
+                android:paddingTop="13dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="13dp">
+
+                <EditText
+                    android:id="@+id/input_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:drawableLeft="@mipmap/ic_password"
+                    android:drawablePadding="5dp"
+                    android:hint="请输入六位密码"
+                    android:inputType="textPassword"
+                    android:maxLength="11"
+                    android:paddingLeft="5dp"
+                    android:textColor="@color/color_black"
+                    android:textColorHint="@color/color_text"
+                    android:textSize="@dimen/size_14" />
+
+                <ImageView
+                    android:id="@+id/password_delete"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_gravity="right|center_vertical"
+                    android:src="@mipmap/ic_delete_input"
+                    android:visibility="gone" />
+            </FrameLayout>
+            <Button
+                android:id="@+id/logon_button"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/button_orange_stroke"
+                android:gravity="center"
+                android:text="登  录"
+                android:textColor="@color/color_white"
+                android:textSize="@dimen/size_18" />
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -124,10 +123,8 @@
                     android:textColor="@color/color_black"
                     android:textSize="@dimen/size_16" />
             </FrameLayout>
-
         </LinearLayout>
     </FrameLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

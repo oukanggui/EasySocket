@@ -9,9 +9,8 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.PopupWindow;
 
-import com.baymax.base.activity.BaseToorBarActivity;
+import com.baymax.base.activity.BaseTitleBarActivity;
 import com.baymax.base.network.RetrofitUtil;
 import com.baymax.utilslib.SharedPreferencesUtil;
 import com.baymax.utilslib.TextUtil;
@@ -29,8 +28,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 
-public class LoginActivity extends BaseToorBarActivity implements View.OnClickListener {
-    private PopupWindow popWindow = null;
+public class LoginActivity extends BaseTitleBarActivity implements View.OnClickListener {
     private EditText inputNumber;
     private EditText inputPassword;
     private View deleteNumber;
@@ -72,10 +70,8 @@ public class LoginActivity extends BaseToorBarActivity implements View.OnClickLi
         inputPassword = (EditText) findViewById(R.id.input_password);
         deleteNumber = findViewById(R.id.number_delete);
         deleteNumber.setOnClickListener(this);
-        deleteNumber.setVisibility(View.GONE);
         deletePassword = findViewById(R.id.password_delete);
         deletePassword.setOnClickListener(this);
-        deletePassword.setVisibility(View.GONE);
         findPassword = findViewById(R.id.find_password);
         findPassword.setOnClickListener(this);
         logonButton = findViewById(R.id.logon_button);

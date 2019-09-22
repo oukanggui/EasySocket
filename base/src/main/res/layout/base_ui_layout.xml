@@ -5,17 +5,17 @@
     android:orientation="vertical">
 
     <!-- 标题栏 -->
+    <ViewStub
+        android:id="@+id/head_layout_viewstub"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout="@layout/base_header_view" />
+
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="@android:color/white"></FrameLayout>
-
-    <ViewStub
-        android:id="@+id/head_layout_viewstub"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout="@layout/base_header_view" />
 
 </LinearLayout>
