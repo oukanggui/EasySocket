@@ -11,7 +11,7 @@ import com.baymax.utilslib.SharedPreferencesUtil;
 import com.baymax.utilslib.TextUtil;
 import com.baymax.utilslib.ToastUtil;
 import com.okg.easysocket.R;
-import com.okg.easysocket.activity.LoginActivity;
+import com.okg.easysocket.activity.SettingActivity;
 import com.okg.easysocket.base.BaseAppFragment;
 import com.okg.easysocket.constant.AppConstants;
 import com.baymax.base.widget.CircleImageView;
@@ -55,23 +55,15 @@ public class MineFragment extends BaseAppFragment {
 
     }
 
-    @OnClick({R.id.mine_user_info, R.id.mine_about, R.id.mine_device, R.id.mine_setting, R.id.mine_exit})
+    @OnClick({R.id.mine_user_info, R.id.mine_device, R.id.mine_setting})
     public void onViewClicked(View view) {
-        Intent intent = null;
         switch (view.getId()) {
             case R.id.mine_user_info:
-            case R.id.mine_about:
             case R.id.mine_device:
-            case R.id.mine_setting:
                 ToastUtil.showToast(mActivity, "功能规划中，敬请期待");
                 break;
-            case R.id.mine_exit:
-                intent = new Intent(mActivity, LoginActivity.class);
-                //清空用戶數據
-                SharedPreferencesUtil.saveString(mActivity, AppConstants.USER_ACCOUNT, "");
-                SharedPreferencesUtil.saveString(mActivity, AppConstants.USER_PASSWORD, "");
-                startActivity(intent);
-                mActivity.finish();
+            case R.id.mine_setting:
+                startActivity(new Intent(mActivity, SettingActivity.class));
                 break;
             default:
                 break;

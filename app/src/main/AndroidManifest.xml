@@ -25,6 +25,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.RegisterActivity" />
+        <activity android:name=".activity.SettingActivity" />
         <service android:name=".server.SocketConnectedService" />
     </application>
 
