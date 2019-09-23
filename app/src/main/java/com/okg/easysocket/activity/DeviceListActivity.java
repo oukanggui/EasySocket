@@ -12,7 +12,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.baymax.base.adapter.base.BaseQuickAdapter;
 import com.baymax.base.dialog.BaseDialog;
-import com.baymax.base.network.RetrofitLoader;
 import com.baymax.base.widget.StateView;
 import com.baymax.utilslib.ToastUtil;
 import com.okg.easysocket.R;
@@ -22,6 +21,7 @@ import com.okg.easysocket.base.BaseAppTitleBarActivity;
 import com.okg.easysocket.bean.DeviceInfo;
 import com.okg.easysocket.bean.ResponseMsg;
 import com.okg.easysocket.dialog.MessageDialog;
+import com.okg.easysocket.helper.RetrofitLoader;
 import com.okg.easysocket.manager.UserInfoManager;
 
 import java.util.ArrayList;
@@ -29,8 +29,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class DeviceListActivity extends BaseAppTitleBarActivity {
@@ -113,36 +111,34 @@ public class DeviceListActivity extends BaseAppTitleBarActivity {
     }
 
     private void getData(boolean isShowLoading) {
-        if (isShowLoading) {
-            mStateView.showLoading();
-        }
-        String userName = UserInfoManager.getInstance(mContext).getUserAccount();
-        Retrofit retrofit = RetrofitLoader.createRetrofit();
-        Call<ResponseMsg<List<DeviceInfo>>> call = retrofit.create(DeviceInterface.class).getDeviceList(userName);
-        call.enqueue(new Callback<ResponseMsg<List<DeviceInfo>>>() {
+        RetrofitLoader.getInstance().request(new RetrofitLoader.OnRequestListener<List<DeviceInfo>>() {
             @Override
-            public void onResponse(Call<ResponseMsg<List<DeviceInfo>>> call, Response<ResponseMsg<List<DeviceInfo>>> response) {
-                mSwipeRefreshLayout.setRefreshing(false);
-                ResponseMsg<List<DeviceInfo>> responseMsg = response.body();
-                if (responseMsg == null) {
-                    mStateView.showEmpty();
-                    return;
-                }
-                if (responseMsg.getCode() == 1) {
-                    mList = responseMsg.getData();
-                    if (mList == null || mList.size() <= 0) {
-                        mStateView.showEmpty();
-                    } else {
-                        mAdapter.setNewData(mList);
-                        mStateView.showContent();
-                    }
-                } else {
-                    mStateView.showRetry();
+            public Call<ResponseMsg<List<DeviceInfo>>> onCreateCall(Retrofit retrofit) {
+                String userName = UserInfoManager.getInstance(mContext).getUserAccount();
+                return retrofit.create(DeviceInterface.class).getDeviceList(userName);
+            }
+
+            @Override
+            public void onBefore() {
+                if (isShowLoading) {
+                    mStateView.showLoading();
                 }
             }
 
             @Override
-            public void onFailure(Call<ResponseMsg<List<DeviceInfo>>> call, Throwable t) {
+            public void onSuccess(String msg, List<DeviceInfo> data) {
+                mSwipeRefreshLayout.setRefreshing(false);
+                mList = data;
+                if (mList == null || mList.size() <= 0) {
+                    mStateView.showEmpty();
+                } else {
+                    mAdapter.setNewData(mList);
+                    mStateView.showContent();
+                }
+            }
+
+            @Override
+            public void onFail(String errMsg, int errCode, Throwable t) {
                 mSwipeRefreshLayout.setRefreshing(false);
                 mStateView.showRetry();
             }
@@ -165,27 +161,29 @@ public class DeviceListActivity extends BaseAppTitleBarActivity {
                 // 设置点击按钮后不关闭对话框
                 //.setAutoDismiss(false)
                 .setListener(new MessageDialog.OnListener() {
-
                     @Override
                     public void onConfirm(BaseDialog dialog) {
-                        Retrofit retrofit = RetrofitLoader.createRetrofit();
-                        Call<ResponseMsg<String>> call = retrofit.create(DeviceInterface.class).deleteDevice(deviceInfo.getDeviceId());
-                        call.enqueue(new Callback<ResponseMsg<String>>() {
+                        RetrofitLoader.getInstance().request(new RetrofitLoader.OnRequestListener<String>() {
                             @Override
-                            public void onResponse(Call<ResponseMsg<String>> call, Response<ResponseMsg<String>> response) {
-                                ResponseMsg<String> responseMsg = response.body();
-                                if (responseMsg == null) {
-                                    ToastUtil.showToast(mContext, "删除失败");
-                                    return;
-                                }
-                                ToastUtil.showToast(mContext, responseMsg.getMsg());
-                                if (responseMsg.getCode() == 1) {
-                                    getData(false);
-                                }
+                            public Call<ResponseMsg<String>> onCreateCall(Retrofit retrofit) {
+                                return retrofit.create(DeviceInterface.class).deleteDevice(deviceInfo.getDeviceId());
                             }
 
                             @Override
-                            public void onFailure(Call<ResponseMsg<String>> call, Throwable t) {
+                            public void onBefore() {
+                                showLoadingDialog("删除中");
+                            }
+
+                            @Override
+                            public void onSuccess(String msg, String data) {
+                                dismissLoadingDialog();
+                                ToastUtil.showToast(mContext, msg);
+                                getData(false);
+                            }
+
+                            @Override
+                            public void onFail(String errMsg, int errCode, Throwable t) {
+                                dismissLoadingDialog();
                                 ToastUtil.showToast(mContext, "删除失败");
                             }
                         });

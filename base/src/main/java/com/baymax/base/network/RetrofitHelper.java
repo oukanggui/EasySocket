@@ -13,11 +13,11 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * @author oukanggui on 2018/3/9.
- * Retrofit加载器
+ * @author oukanggui on 2018/3/9
+ * Retrofit辅助类
  */
 
-public class RetrofitLoader {
+public class RetrofitHelper {
     private static Retrofit mRetrofit;
 
     /**
@@ -27,7 +27,7 @@ public class RetrofitLoader {
      */
     public static Retrofit createRetrofit() {
         if (mRetrofit == null) {
-            synchronized (RetrofitLoader.class) {
+            synchronized (RetrofitHelper.class) {
                 if (mRetrofit == null) {
                     //声明日志类
                     HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();

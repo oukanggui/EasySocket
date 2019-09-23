@@ -11,20 +11,17 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.baymax.base.activity.BaseTitleBarActivity;
-import com.baymax.base.network.RetrofitLoader;
 import com.baymax.utilslib.TextUtil;
 import com.baymax.utilslib.ToastUtil;
 import com.okg.easysocket.R;
 import com.okg.easysocket.api.login.LoginInterface;
 import com.okg.easysocket.bean.ResponseMsg;
-import com.okg.easysocket.constant.AppConstants;
+import com.okg.easysocket.helper.RetrofitLoader;
 import com.okg.easysocket.manager.UserInfoManager;
 
 import java.util.Date;
 
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 
 
@@ -187,36 +184,33 @@ public class LoginActivity extends BaseTitleBarActivity implements View.OnClickL
             ToastUtil.showToast(mContext, "长度不对，密码长度为六位！");
             return;
         }
-        Retrofit retrofit = RetrofitLoader.createRetrofit();
-        Call<ResponseMsg<String>> call = retrofit.create(LoginInterface.class).login(account, password);
-        showLoadingDialog("登录中");
-        call.enqueue(new Callback<ResponseMsg<String>>() {
+        RetrofitLoader.getInstance().request(new RetrofitLoader.OnRequestListener<String>() {
             @Override
-            public void onResponse(Call<ResponseMsg<String>> call, Response<ResponseMsg<String>> response) {
-                dismissLoadingDialog();
-                ResponseMsg responseMsg = response.body();
-                if (responseMsg == null) {
-                    ToastUtil.showToast(mContext, "登录异常");
-                    return;
-                }
-                if (responseMsg.getCode() == 1) {
-                    ToastUtil.showToast(mContext, responseMsg.getMsg());
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    UserInfoManager.getInstance(mContext).saveUserInfo(account, password);
-                    overridePendingTransition(R.anim.anim_activity_enter_left, R.anim.anim_activity_exit_right);
-                    finish();
-                } else {
-                    ToastUtil.showToast(mContext, responseMsg.getMsg());
-                }
+            public void onBefore() {
+                showLoadingDialog("登录中");
             }
 
             @Override
-            public void onFailure(Call<ResponseMsg<String>> call, Throwable t) {
+            public Call<ResponseMsg<String>> onCreateCall(Retrofit retrofit) {
+                return retrofit.create(LoginInterface.class).login(account, password);
+            }
+
+            @Override
+            public void onSuccess(String msg, String data) {
                 dismissLoadingDialog();
-                ToastUtil.showToast(mContext, AppConstants.ERROR_MSG);
+                ToastUtil.showToast(mContext, msg);
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+                UserInfoManager.getInstance(mContext).saveUserInfo(account, password);
+                overridePendingTransition(R.anim.anim_activity_enter_left, R.anim.anim_activity_exit_right);
+                finish();
+            }
+
+            @Override
+            public void onFail(String errMsg, int errCode, Throwable t) {
+                dismissLoadingDialog();
+                ToastUtil.showToast(mContext, errMsg);
             }
         });
-
     }
 }

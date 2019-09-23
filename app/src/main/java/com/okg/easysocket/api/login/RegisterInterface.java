@@ -14,7 +14,7 @@ import retrofit2.http.Query;
 public interface RegisterInterface {
 
     @GET("user/register")
-    Call<ResponseMsg> register(@Query("username") String username, @Query("password") String password,
+    Call<ResponseMsg<String>> register(@Query("username") String username, @Query("password") String password,
                                @Query("code") String code);
 
 

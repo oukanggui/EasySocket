@@ -16,6 +16,35 @@
         android:orientation="vertical"
         android:paddingTop="20dp">
 
+        <TextView
+            android:id="@+id/tv_message_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textColor="#333333"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="标题" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_message_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="center"
+            android:lineSpacingExtra="4dp"
+            android:textColor="#333333"
+            android:textSize="14sp"
+            tools:text="内容" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_divider_small"
+            android:layout_marginTop="10dp"
+            android:background="@color/color_line" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"
@@ -51,36 +80,6 @@
                 android:textColor="@color/color_blue"
                 android:textSize="14sp" />
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/tv_message_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:textColor="#333333"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            tools:text="标题" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/height_divider_small"
-            android:layout_marginTop="10dp"
-            android:background="@color/color_line" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tv_message_message"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginBottom="10dp"
-            android:gravity="center"
-            android:lineSpacingExtra="4dp"
-            android:textColor="#333333"
-            android:textSize="14sp"
-            tools:text="内容" />
 
     </LinearLayout>
 

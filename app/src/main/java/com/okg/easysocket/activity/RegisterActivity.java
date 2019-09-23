@@ -20,7 +20,7 @@ import com.bumptech.glide.signature.StringSignature;
 import com.okg.easysocket.R;
 import com.okg.easysocket.api.login.RegisterInterface;
 import com.okg.easysocket.bean.ResponseMsg;
-import com.okg.easysocket.constant.AppConstants;
+import com.okg.easysocket.helper.RetrofitLoader;
 import com.okg.easysocket.manager.CookiesManager;
 import com.okg.easysocket.manager.UserInfoManager;
 
@@ -29,8 +29,6 @@ import java.io.InputStream;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -240,33 +238,34 @@ public class RegisterActivity extends BaseTitleBarActivity implements View.OnCli
                 return;
             }
 
-            Retrofit retrofit = new Retrofit.Builder()
+            Retrofit registerRetrofit = new Retrofit.Builder()
                     .baseUrl(Constants.BASE_URL) // 设置 网络请求base url
                     .addConverterFactory(GsonConverterFactory.create()) //设置使用Gson解析
                     .client(mOkHttpClient)
                     .build();
-            Call<ResponseMsg> call = retrofit.create(RegisterInterface.class).register(phone, password, qrCode);
-            showLoadingDialog("注册中");
-            call.enqueue(new Callback<ResponseMsg>() {
+            RetrofitLoader.getInstance().request(new RetrofitLoader.OnRequestListener<String>() {
                 @Override
-                public void onResponse(Call<ResponseMsg> call, Response<ResponseMsg> response) {
-                    dismissLoadingDialog();
-                    ResponseMsg responseMsg = response.body();
-                    if (responseMsg == null) {
-                        ToastUtil.showToast(mContext, "注册异常");
-                        return;
-                    }
-                    ToastUtil.showToast(mContext, responseMsg.getMsg());
-                    if (responseMsg != null && responseMsg.getCode() == 1) {
-                        UserInfoManager.getInstance(mContext).saveUserInfo(phone, password);
-                        finish();
-                    }
+                public void onBefore() {
+                    showLoadingDialog("注册中");
                 }
 
                 @Override
-                public void onFailure(Call<ResponseMsg> call, Throwable t) {
+                public Call<ResponseMsg<String>> onCreateCall(Retrofit retrofit) {
+                    return registerRetrofit.create(RegisterInterface.class).register(phone, password, qrCode);
+                }
+
+                @Override
+                public void onSuccess(String msg, String data) {
                     dismissLoadingDialog();
-                    ToastUtil.showToast(mContext, AppConstants.ERROR_MSG);
+                    ToastUtil.showToast(mContext, msg);
+                    UserInfoManager.getInstance(mContext).saveUserInfo(phone, password);
+                    finish();
+                }
+
+                @Override
+                public void onFail(String errMsg, int errCode, Throwable t) {
+                    dismissLoadingDialog();
+                    ToastUtil.showToast(mContext, errMsg);
                 }
             });
         }
