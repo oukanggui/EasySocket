@@ -11,7 +11,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.baymax.base.activity.BaseTitleBarActivity;
-import com.baymax.base.network.RetrofitUtil;
+import com.baymax.base.network.RetrofitLoader;
 import com.baymax.utilslib.TextUtil;
 import com.baymax.utilslib.ToastUtil;
 import com.okg.easysocket.R;
@@ -187,7 +187,7 @@ public class LoginActivity extends BaseTitleBarActivity implements View.OnClickL
             ToastUtil.showToast(mContext, "长度不对，密码长度为六位！");
             return;
         }
-        Retrofit retrofit = RetrofitUtil.createRetrofit();
+        Retrofit retrofit = RetrofitLoader.createRetrofit();
         Call<ResponseMsg<String>> call = retrofit.create(LoginInterface.class).login(account, password);
         showLoadingDialog("登录中");
         call.enqueue(new Callback<ResponseMsg<String>>() {

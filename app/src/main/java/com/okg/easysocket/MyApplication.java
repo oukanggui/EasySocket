@@ -3,6 +3,7 @@ package com.okg.easysocket;
 import android.app.Application;
 
 import com.baymax.easysocket.manager.EasySocket;
+import com.baymax.utilslib.LogUtil;
 import com.okg.easysocket.server.manager.EasyServerSocket;
 
 
@@ -18,5 +19,10 @@ public class MyApplication extends Application {
         super.onCreate();
         //先启动服务器,再初始化客户端
         //EasyServerSocket.getInstance().startServer(this, 8082);
+        init();
+    }
+
+    private void init() {
+        LogUtil.init(this, true, true);
     }
 }

@@ -12,7 +12,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.baymax.base.adapter.base.BaseQuickAdapter;
 import com.baymax.base.dialog.BaseDialog;
-import com.baymax.base.network.RetrofitUtil;
+import com.baymax.base.network.RetrofitLoader;
 import com.baymax.base.widget.StateView;
 import com.baymax.utilslib.ToastUtil;
 import com.okg.easysocket.R;
@@ -117,7 +117,7 @@ public class DeviceListActivity extends BaseAppTitleBarActivity {
             mStateView.showLoading();
         }
         String userName = UserInfoManager.getInstance(mContext).getUserAccount();
-        Retrofit retrofit = RetrofitUtil.createRetrofit();
+        Retrofit retrofit = RetrofitLoader.createRetrofit();
         Call<ResponseMsg<List<DeviceInfo>>> call = retrofit.create(DeviceInterface.class).getDeviceList(userName);
         call.enqueue(new Callback<ResponseMsg<List<DeviceInfo>>>() {
             @Override
@@ -168,7 +168,7 @@ public class DeviceListActivity extends BaseAppTitleBarActivity {
 
                     @Override
                     public void onConfirm(BaseDialog dialog) {
-                        Retrofit retrofit = RetrofitUtil.createRetrofit();
+                        Retrofit retrofit = RetrofitLoader.createRetrofit();
                         Call<ResponseMsg<String>> call = retrofit.create(DeviceInterface.class).deleteDevice(deviceInfo.getDeviceId());
                         call.enqueue(new Callback<ResponseMsg<String>>() {
                             @Override

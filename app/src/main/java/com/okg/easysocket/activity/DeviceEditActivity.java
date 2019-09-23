@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
-import com.baymax.base.network.RetrofitUtil;
+import com.baymax.base.network.RetrofitLoader;
 import com.baymax.utilslib.TextUtil;
 import com.baymax.utilslib.ToastUtil;
 import com.okg.easysocket.R;
@@ -74,7 +74,7 @@ public class DeviceEditActivity extends BaseAppTitleBarActivity {
                     break;
                 }
                 showLoadingDialog("处理中");
-                Retrofit retrofit = RetrofitUtil.createRetrofit();
+                Retrofit retrofit = RetrofitLoader.createRetrofit();
                 Call<ResponseMsg<String>> call;
                 if (isEditMode) {
                     call = retrofit.create(DeviceInterface.class).saveDevice(mDeviceInfo.getDeviceId(), strDeviceName);

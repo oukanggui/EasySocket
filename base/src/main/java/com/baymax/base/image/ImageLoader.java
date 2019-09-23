@@ -15,7 +15,6 @@ import com.example.base.R;
  */
 public class ImageLoader {
     public static void loadImage(Context context, String url, ImageView imageView) {
-        String updateTime = String.valueOf(System.currentTimeMillis());
         Glide.with(context)
                 .load(url)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
@@ -23,7 +22,6 @@ public class ImageLoader {
                 .centerCrop()
                 .placeholder(R.mipmap.ic_default_placeholder)
                 .error(R.mipmap.ic_default_placeholder)
-                .signature(new StringSignature(updateTime))
                 .into(imageView);
     }
 

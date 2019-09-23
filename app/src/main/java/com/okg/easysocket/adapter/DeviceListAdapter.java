@@ -1,30 +1,17 @@
 package com.okg.easysocket.adapter;
 
-import android.content.Intent;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
 
 import com.baymax.base.adapter.base.BaseQuickAdapter;
 import com.baymax.base.adapter.base.BaseViewHolder;
-import com.baymax.base.dialog.BaseDialog;
-import com.baymax.base.network.RetrofitUtil;
 import com.baymax.utilslib.ToastUtil;
 import com.okg.easysocket.R;
-import com.okg.easysocket.activity.DeviceEditActivity;
-import com.okg.easysocket.api.device.DeviceInterface;
 import com.okg.easysocket.bean.DeviceInfo;
-import com.okg.easysocket.bean.ResponseMsg;
-import com.okg.easysocket.dialog.MessageDialog;
 
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
 
 /**
  * @author Baymax

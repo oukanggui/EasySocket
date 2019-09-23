@@ -1,6 +1,5 @@
 package com.okg.easysocket.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -11,32 +10,41 @@ import android.widget.ImageView;
 
 import com.baymax.base.activity.BaseTitleBarActivity;
 import com.baymax.base.constant.Constants;
-import com.baymax.base.network.RetrofitUtil;
-import com.baymax.utilslib.SharedPreferencesUtil;
 import com.baymax.utilslib.TextUtil;
 import com.baymax.utilslib.ToastUtil;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.signature.StringSignature;
 import com.okg.easysocket.R;
 import com.okg.easysocket.api.login.RegisterInterface;
 import com.okg.easysocket.bean.ResponseMsg;
 import com.okg.easysocket.constant.AppConstants;
-import com.baymax.base.image.ImageLoader;
+import com.okg.easysocket.manager.CookiesManager;
 import com.okg.easysocket.manager.UserInfoManager;
 
+import java.io.InputStream;
+
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class RegisterActivity extends BaseTitleBarActivity implements View.OnClickListener {
 
-    private static final String URL_GET_QRCODE = Constants.BASE_URL + "/user/code";
+    private static final String URL_GET_CODE = Constants.BASE_URL + "/user/code";
     private View bt_register;
     private EditText et_phone, et_password, et_password_again, et_qrcode;
     private ImageView iv_deletePhone, iv_deletePsw, iv_deletePswAgain, iv_qrcode;
     private String password;
     private String passwordAgain;
     private String phone;
+    private OkHttpClient mOkHttpClient;
 
     @Override
     public int getLayoutId() {
@@ -128,7 +136,42 @@ public class RegisterActivity extends BaseTitleBarActivity implements View.OnCli
     public void initData() {
         setHeaderTitle("欢迎注册");
         showBackLayout(true);
-        ImageLoader.loadImage(mContext, URL_GET_QRCODE, iv_qrcode);
+        registerOkHttpForGlide();
+        loadCodeImage();
+    }
+
+    /**
+     * Glide注册OkHttp进行网络加载
+     */
+    private void registerOkHttpForGlide() {
+        //声明日志类
+        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
+        //设定日志级别
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        mOkHttpClient = new OkHttpClient.Builder()
+                .cookieJar(new CookiesManager())   //cookie管理
+                .addInterceptor(httpLoggingInterceptor)
+                .build();
+        // 使用OkHttp作为图片请求,不Register的话，图片请求不会经过OkHttpClient
+        Glide.get(this).register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(mOkHttpClient));
+    }
+
+    /**
+     * 加载验证码图片
+     */
+    private void loadCodeImage() {
+        String updateTime = String.valueOf(System.currentTimeMillis());
+        // 验证码不用缓存
+        Glide.with(this)
+                .load(URL_GET_CODE)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .skipMemoryCache(true)
+                .crossFade()
+                .centerCrop()
+                .signature(new StringSignature(updateTime))
+                .placeholder(com.example.base.R.mipmap.ic_default_placeholder)
+                .error(com.example.base.R.mipmap.ic_default_placeholder)
+                .into(iv_qrcode);
     }
 
 
@@ -154,7 +197,7 @@ public class RegisterActivity extends BaseTitleBarActivity implements View.OnCli
             return;
         }
         if (viewId == R.id.register_iv_qrcode) {
-            ImageLoader.loadImage(mContext, URL_GET_QRCODE, iv_qrcode);
+            loadCodeImage();
             return;
         }
 
@@ -197,7 +240,11 @@ public class RegisterActivity extends BaseTitleBarActivity implements View.OnCli
                 return;
             }
 
-            Retrofit retrofit = RetrofitUtil.createRetrofit();
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(Constants.BASE_URL) // 设置 网络请求base url
+                    .addConverterFactory(GsonConverterFactory.create()) //设置使用Gson解析
+                    .client(mOkHttpClient)
+                    .build();
             Call<ResponseMsg> call = retrofit.create(RegisterInterface.class).register(phone, password, qrCode);
             showLoadingDialog("注册中");
             call.enqueue(new Callback<ResponseMsg>() {
