@@ -61,8 +61,8 @@ public class DeviceEditActivity extends BaseAppTitleBarActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.add_ensure:
-                String strDeviceName = etDeviceName.getText().toString().trim();
-                String strDeviceSerialNumber = etDeviceSerialNumber.getText().toString().trim();
+                final String strDeviceName = etDeviceName.getText().toString().trim();
+                final String strDeviceSerialNumber = etDeviceSerialNumber.getText().toString().trim();
                 if (TextUtil.isEmpty(strDeviceName)) {
                     ToastUtil.showToast(mContext, "设备名称不能为空");
                     break;

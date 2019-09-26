@@ -15,18 +15,19 @@ import retrofit2.Retrofit;
  * @author Baymax
  * @date 2019-09-23
  * 描述：Retrofit加载器，对Retrofit进行进一步封装，减少样本代码
- * 其中泛型T值ResponseMsg里面data字段类型
  */
 public class RetrofitLoader {
     private static RetrofitLoader sRetrofitLoader;
 
     /**
      * Retrofit网络请求监听器
+     * 其中泛型T值ResponseMsg里面data字段类型
      */
     public interface OnRequestListener<T> {
         /**
          * 创建Call对象
          *
+         * @param retrofit
          * @return
          */
         Call<ResponseMsg<T>> onCreateCall(Retrofit retrofit);
@@ -71,7 +72,7 @@ public class RetrofitLoader {
         return sRetrofitLoader;
     }
 
-    public <T> void request(@NonNull OnRequestListener<T> onRequestListener) {
+    public <T> void request(@NonNull final OnRequestListener<T> onRequestListener) {
         onRequestListener.onBefore();
         Call<ResponseMsg<T>> call = onRequestListener.onCreateCall(RetrofitHelper.createRetrofit());
         if (call == null) {
